@@ -1,6 +1,9 @@
 keyword: list = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', 'int', 'print', 'return', 'true']
 punctuator: list = ['{', '}', '(', ')', '[', ']', ',', ';']
 hex: list = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f']
+arithmetic_operator = ['+', '-', '*', '/', '%']
+relational_operators = [">", "<", ">=", "<=", "==", "!="]
+logic_operator = ["&&", "||", "!"]
 ascii_list = [chr(i) for i in range(128)]
 def is_digit(character):
     return '0' <= character <= '9'
@@ -101,4 +104,12 @@ def staticChar_identifier(string:str):
             Token += string[1]
         Token += "'"
     return Token == string
-print(staticString_identifier("\"ai\"d"))
+
+def operator_identifier(string: str):
+    global arithmetic_operator, logic_operator, relational_operators
+    if string in arithmetic_operator or string in logic_operator or string in relational_operators:
+        return True
+    return False
+def whitespace(string: str):
+    return string == ' ' or string == '\t' or string == '\n'
+print(operator_identifier('<!'))
