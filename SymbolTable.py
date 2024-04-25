@@ -7,7 +7,7 @@ Types = ['T_Bool', 'T_Breal', 'T_Char', 'T_Continue', 'T_Else', 'T_False', 'T_Fo
 
 
 # Token
-class Token:
+class SymbolTable:
     def __init__(self,):
         #dic for table
         self.entries = {}
