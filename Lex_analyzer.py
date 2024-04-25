@@ -79,18 +79,20 @@ def number_identifier(string:str):
 def staticString_identifier(string:str):
     Token = ''
     i = 0
-    if string[0] == '"' and string[len(string) - 1] == '"':
+    if len(string) > 2 and string[0] == '"' and string[len(string) - 1] == '"':
         Token += '"'
         i += 1
-        while i < len(string):
-            check_if: bool = False
+        while i < len(string) - 1:
             if string[i] == '"':
-                Token += string[i]
+                if string[i-1] == '\\':
+                    Token += string[i]
                 i += 1
-                check_if = True
-            if check_if == False:
-                Token += string[i]
-                i += 1
+                continue
+            Token += string[i]
+            i += 1
+        Token += '"'
+        i += 1
+
     return Token == string
 def staticChar_identifier(string:str):
     global ascii_list
@@ -112,4 +114,5 @@ def operator_identifier(string: str):
     return False
 def whitespace(string: str):
     return string == ' ' or string == '\t' or string == '\n'
-print(operator_identifier('<!'))
+
+print(staticString_identifier('"annnaa"hfdt"'))
