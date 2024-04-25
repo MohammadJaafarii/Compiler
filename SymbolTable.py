@@ -46,7 +46,7 @@ class SymbolTable:
 
 
     def update_entry(self, id, value):
-        if name not in self.entries:
+        if id not in self.entries:
             raise ValueError(f"this name {id} is not in table ")
 
         self.entries[id]["value"] = value
