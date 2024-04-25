@@ -5,8 +5,23 @@ Types = ['T_Bool', 'T_Breal', 'T_Char', 'T_Continue', 'T_Else', 'T_False', 'T_Fo
     , 'T_Assign', 'T_LP', 'T_RP', 'T_LC', 'T_RC', 'T_LB', 'T_RB', 'T_Semicolon', 'T_Comma', 'T_Id', 'T_Decimal'
     , 'T_Hexadecimal', 'T_String', 'T_Character', 'T_Comment', 'T_Whitespace']
 
+id:int = 0
 
-# Token
+class Token:
+    def __init__(self, name, type, location, length, value=None):
+        global id
+        self.id = id
+        self.name = name
+        self.type = type
+        self.location = location
+        self.length = length
+        self.value = value
+        id += 1
+
+
+
+
+# Symbol Table
 class SymbolTable:
     def __init__(self,):
         #dic for table
@@ -16,26 +31,29 @@ class SymbolTable:
         if name in self.entries:
             raise  ValueError(f"this name {name} is in table before")
 
-        self.entries[name] = {
-            "type" : type,
-            "value" : value,
-            "location" : location,
-            "length" : length
+        token = Token(name,type,location,length,value)
+
+        self.entries[token.id] = {
+            "name" : token.name,
+            "type" :token.type,
+            "value" : token.value,
+            "location" : token.location,
+            "length" : token.length
         }
 
-    def get_entry(self, name):
-        return self.entries.get(name)
+    def get_entry(self, id):
+        return self.entries.get(id)
 
 
-    def update_entry(self, name, value):
+    def update_entry(self, id, value):
         if name not in self.entries:
-            raise ValueError(f"this name {name} is not in table ")
+            raise ValueError(f"this name {id} is not in table ")
 
-        self.entries[name]["value"] = value
+        self.entries[id]["value"] = value
 
-    def delete_entry(self,name):
-        if name not in self.entries:
-            raise ValueError(f"this name {name} is not in table")
+    def delete_entry(self,id):
+        if id not in self.entries:
+            raise ValueError(f"this name {id} is not in table")
 
-        del self.entries[name]
+        del self.entries[id]
 
