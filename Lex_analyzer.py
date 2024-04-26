@@ -130,7 +130,7 @@ def punctuator_identifier(character: str):
         return True
     return False
 def comment_identifier(string: str):
-    if string[0] == '/' and string[1] == '/' and string[len(string) - 1] == '\n':
+    if len(string) > 2 and string[0] == '/' and string[1] == '/' and string[len(string) - 1] == '\n':
         return True
     return False
 def number_identifier(string:str):
@@ -208,17 +208,17 @@ def operator_identifier(string: str):
 def whitespace(string: str):
     return string == ' ' or string == '\t' or string == '\n'
 
-# def read_file():
-#     file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\PycharmProjects')
-#     with open(file_path, 'r') as file:
-#         global line_lists
-#         while True:
-#             line = file.readline()
-#             if not line:
-#                 break
-#             line_lists.append(line)
+def read_file():
+    file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\PycharmProjects')
+    with open(file_path, 'r') as file:
+        global line_lists
+        while True:
+            line = file.readline()
+            if not line:
+                break
+            line_lists.append(line)
 def analyzer():
-    line_lists = ['int test_function(int a, int b, bool c){']
+    #line_lists = ['int test_function(int a, int b, bool c){']
     symboleTable = SymbolTable.SymbolTable()
     index: int = 0
     global functions_list
@@ -229,8 +229,9 @@ def analyzer():
         prev_funct = ''
         curr_funct = ''
         i = -1
-        for a in range(len(line)):
-            i += 1
+        x = len(line)
+        while i < len(line):
+
             iterator_text += line[i]
             curr_flag = False
             curr_funct = ''
@@ -274,6 +275,8 @@ def analyzer():
                 prev_flag = curr_flag
                 prev_funct = curr_funct
             index += 1
+            i += 1
     return SymbolTable
+read_file()
 st = analyzer()
 print('successfully')
