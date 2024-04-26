@@ -138,7 +138,7 @@ def number_identifier(string:str):
     i = 0
     Token = ''
     # hex detector
-    if len(string) >= 2 and string[0:2] == '0x' or string[0:2] == '0X':
+    if len(string) >= 3 and string[0:2] == '0x' or string[0:2] == '0X':
         Token += string[0:2]
         i = 2
         if string[i] in hex:
@@ -191,7 +191,7 @@ def staticChar_identifier(string:str):
     global ascii_list
 
     Token = ''
-    if string[0] =="'" and string[len(string) - 1] == "'":
+    if len(string) > 2  and string[0] =="'" and string[len(string) - 1] == "'":
         Token += "'"
         if string[1:3] == "\\'" or string[1:3] == "\\\\":
             Token += string[1:3]
@@ -218,28 +218,19 @@ def read_file():
                 break
             line_lists.append(line)
 def analyzer():
-<<<<<<< HEAD
-=======
-    line_lists = ['	if (c == true){']
->>>>>>> 48fb2071345f53361f2c0f424a85759a110f3e6d
+    #line_lists = ['	char _assign1 = \"=\";']
     symboleTable = SymbolTable.SymbolTable()
     index: int = 0
-    global functions_list, line_lists
+    global functions_list
     for line in line_lists:
         iterator_text = ''
         prev_flag = False
         curr_flag = False
         prev_funct = ''
         curr_funct = ''
-<<<<<<< HEAD
-        i = 0
-        while i <len(line):
-=======
         i = -1
         x = len(line)
         while i < len(line):
-            i += 1
->>>>>>> 48fb2071345f53361f2c0f424a85759a110f3e6d
             iterator_text += line[i]
             curr_flag = False
             curr_funct = ''
@@ -275,6 +266,8 @@ def analyzer():
                 type = 'T_Whitespace'
                 Token = iterator_text
                 iterator_text = ''
+                prev_flag = False
+                prev_funct = ''
                 symboleTable.insert_entry(name=Token, type=type, value=None, location=index, length=len(Token))
                 if iterator_text == '\t':
                     index += 1
@@ -283,16 +276,9 @@ def analyzer():
                 prev_flag = curr_flag
                 prev_funct = curr_funct
             index += 1
-<<<<<<< HEAD
             i += 1
-    return SymbolTable
-if __name__ == '__main__':
-    read_file()
-    analyzer()
-=======
 
     return SymbolTable
-#read_file()
+read_file()
 st = analyzer()
 print('successfully')
->>>>>>> 48fb2071345f53361f2c0f424a85759a110f3e6d
