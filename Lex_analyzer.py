@@ -112,4 +112,3 @@ def operator_identifier(string: str):
     return False
 def whitespace(string: str):
     return string == ' ' or string == '\t' or string == '\n'
-print(operator_identifier('<!'))
