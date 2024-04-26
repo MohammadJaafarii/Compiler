@@ -1,3 +1,5 @@
+from tkinter import filedialog
+
 keyword: list = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', 'int', 'print', 'return', 'true']
 punctuator: list = ['{', '}', '(', ')', '[', ']', ',', ';']
 hex: list = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f']
@@ -5,6 +7,7 @@ arithmetic_operator = ['+', '-', '*', '/', '%']
 relational_operators = [">", "<", ">=", "<=", "==", "!="]
 logic_operator = ["&&", "||", "!"]
 ascii_list = [chr(i) for i in range(128)]
+text_lists:list = []
 def is_digit(character):
     return '0' <= character <= '9'
 
@@ -79,18 +82,20 @@ def number_identifier(string:str):
 def staticString_identifier(string:str):
     Token = ''
     i = 0
-    if string[0] == '"' and string[len(string) - 1] == '"':
+    if len(string) > 2 and string[0] == '"' and string[len(string) - 1] == '"':
         Token += '"'
         i += 1
-        while i < len(string):
-            check_if: bool = False
+        while i < len(string) - 1:
             if string[i] == '"':
-                Token += string[i]
+                if string[i-1] == '\\':
+                    Token += string[i]
                 i += 1
-                check_if = True
-            if check_if == False:
-                Token += string[i]
-                i += 1
+                continue
+            Token += string[i]
+            i += 1
+        Token += '"'
+        i += 1
+
     return Token == string
 def staticChar_identifier(string:str):
     global ascii_list
@@ -112,3 +117,13 @@ def operator_identifier(string: str):
     return False
 def whitespace(string: str):
     return string == ' ' or string == '\t' or string == '\n'
+
+def read_file():
+    file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\PycharmProjects')
+    with open(file_path, 'r') as file:
+        global text_lists
+        while True:
+            line = file.readline()
+            if not line:
+                break
+            text_lists.append(line)
