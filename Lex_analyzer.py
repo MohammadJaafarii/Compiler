@@ -9,7 +9,7 @@ relational_operators = [">", "<", ">=", "<=", "==", "!="]
 logic_operator = ["&&", "||", "!"]
 ascii_list = [chr(i) for i in range(128)]
 line_lists:list = []
-functions_list: list = ['keyword_identifier', 'id_identifier', 'punctuator_identifier', 'comment_identifier', 'number_identifier',
+functions_list: list = ['keyword_identifier', 'id_identifier', 'punctuator_identifier', 'comment_identifier', 'numberdecimal_identifier','numberhex_identifier',
                         'staticString_identifier', 'staticChar_identifier', 'operator_identifier', 'whitespace']
 Type :dict = {
     "bool": "T_Bool",
@@ -98,6 +98,7 @@ DOUBLE_CHAR_OPERATORS = {
     '||': 'T_LOp_OR',
 
 }
+symboleTable = SymbolTable.SymbolTable()
 def is_digit(character):
     return '0' <= character <= '9'
 
@@ -130,33 +131,39 @@ def punctuator_identifier(character: str):
         return True
     return False
 def comment_identifier(string: str):
-    if len(string) > 2 and string[0] == '/' and string[1] == '/' and string[len(string) - 1] == '\n':
+    if len(string) >= 2 and string[0] == '/' and string[1] == '/' and string[-1] != '\n':
         return True
     return False
-def number_identifier(string:str):
+def numberhex_identifier(string:str):
     global hex
     i = 0
     Token = ''
     # hex detector
-    if len(string) >= 3 and string[0:2] == '0x' or string[0:2] == '0X':
-        Token += string[0:2]
-        i = 2
-        if string[i] in hex:
-            Token += string[i]
-            i += 1
-            while i < len(string) and string[i] in hex:
-                Token += string[i]
-                i += 1
-            if i < len(string) and string[i] == '.':
+    x = len(string)
+    if len(string) >= 2 and (string[0:2] == '0x' or string[0:2] == '0X'):
+        if  len(string) > 2:
+            Token += string[0:2]
+            i = 2
+            if string[i] in hex:
                 Token += string[i]
                 i += 1
                 while i < len(string) and string[i] in hex:
                     Token += string[i]
                     i += 1
+                if i < len(string) and string[i] == '.':
+                    Token += string[i]
+                    i += 1
+                    while i < len(string) and string[i] in hex:
+                        Token += string[i]
+                        i += 1
+        else:
+            Token = string
+    return Token == string
     # decimal detector
-    elif is_digit(string[i]) or string[i] == '+' or string[i] == '-':
-        i = 0
-        Token = ''
+def numberdecimal_identifier(string:str):
+    i = 0
+    Token = ''
+    if is_digit(string[i]) or string[i] == '+' or string[i] == '-':
         Token += string[i]
         i += 1
         while i < len(string) and is_digit(string[i]):
@@ -218,8 +225,7 @@ def read_file():
                 break
             line_lists.append(line)
 def analyzer():
-    #line_lists = ['	char _assign1 = \"=\";']
-    symboleTable = SymbolTable.SymbolTable()
+    #line_lists = ['	print(\"this is\\" a whole string no other token like \'=\' or \'else\' or even \\\\comment should be recogized\");\n']
     index: int = 0
     global functions_list
     for line in line_lists:
@@ -228,7 +234,7 @@ def analyzer():
         curr_flag = False
         prev_funct = ''
         curr_funct = ''
-        i = -1
+        i = 0
         x = len(line)
         while i < len(line):
             iterator_text += line[i]
@@ -252,8 +258,10 @@ def analyzer():
                     type = 'T_Character'
                 elif prev_funct == 'staticString_identifier':
                     type = 'T_String'
-                elif prev_funct == 'number_identifier':
+                elif prev_funct == 'numberdecimal_identifier':
                     type = 'T_Decimal'
+                elif prev_funct == 'numberhex_identifier':
+                    type = 'T_Hexadecimal'
                 elif prev_funct == 'comment_identifier':
                     type = 'T_Comment'
                 elif prev_funct == 'id_identifier':
@@ -278,7 +286,10 @@ def analyzer():
             index += 1
             i += 1
 
-    return SymbolTable
-read_file()
-st = analyzer()
-print('successfully')
+
+
+
+if __name__ == '__main__':
+    read_file()
+    analyzer()
+    print("succes")
