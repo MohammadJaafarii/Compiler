@@ -4,7 +4,7 @@ import SymbolTable
 keyword: list = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', 'int', 'print', 'return', 'true']
 punctuator: list = ['{', '}', '(', ')', '[', ']', ',', ';']
 hex: list = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f']
-arithmetic_operator = ['+', '-', '*', '/', '%']
+arithmetic_operator = ['+', '-', '*', '/', '%', '=']
 relational_operators = [">", "<", ">=", "<=", "==", "!="]
 logic_operator = ["&&", "||", "!"]
 ascii_list = [chr(i) for i in range(128)]
@@ -218,7 +218,7 @@ def read_file():
                 break
             line_lists.append(line)
 def analyzer():
-    #line_lists = ['int test_function(int a, int b, bool c){']
+    line_lists = ['	if (c == true){']
     symboleTable = SymbolTable.SymbolTable()
     index: int = 0
     global functions_list
@@ -231,7 +231,7 @@ def analyzer():
         i = -1
         x = len(line)
         while i < len(line):
-
+            i += 1
             iterator_text += line[i]
             curr_flag = False
             curr_funct = ''
@@ -275,8 +275,8 @@ def analyzer():
                 prev_flag = curr_flag
                 prev_funct = curr_funct
             index += 1
-            i += 1
+
     return SymbolTable
-read_file()
+#read_file()
 st = analyzer()
 print('successfully')
