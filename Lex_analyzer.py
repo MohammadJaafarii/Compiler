@@ -208,29 +208,27 @@ def operator_identifier(string: str):
 def whitespace(string: str):
     return string == ' ' or string == '\t' or string == '\n'
 
-# def read_file():
-#     file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\PycharmProjects')
-#     with open(file_path, 'r') as file:
-#         global line_lists
-#         while True:
-#             line = file.readline()
-#             if not line:
-#                 break
-#             line_lists.append(line)
+def read_file():
+    file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\PycharmProjects')
+    with open(file_path, 'r') as file:
+        global line_lists
+        while True:
+            line = file.readline()
+            if not line:
+                break
+            line_lists.append(line)
 def analyzer():
-    line_lists = ['int test_function(int a, int b, bool c){']
     symboleTable = SymbolTable.SymbolTable()
     index: int = 0
-    global functions_list
+    global functions_list, line_lists
     for line in line_lists:
         iterator_text = ''
         prev_flag = False
         curr_flag = False
         prev_funct = ''
         curr_funct = ''
-        i = -1
-        for a in range(len(line)):
-            i += 1
+        i = 0
+        while i <len(line):
             iterator_text += line[i]
             curr_flag = False
             curr_funct = ''
@@ -274,6 +272,8 @@ def analyzer():
                 prev_flag = curr_flag
                 prev_funct = curr_funct
             index += 1
+            i += 1
     return SymbolTable
-st = analyzer()
-print('successfully')
+if __name__ == '__main__':
+    read_file()
+    analyzer()
