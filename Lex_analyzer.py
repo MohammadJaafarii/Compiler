@@ -1,5 +1,6 @@
+import sys
 from tkinter import filedialog
-
+import SymbolTable
 keyword: list = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', 'int', 'print', 'return', 'true']
 punctuator: list = ['{', '}', '(', ')', '[', ']', ',', ';']
 hex: list = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f']
@@ -7,7 +8,96 @@ arithmetic_operator = ['+', '-', '*', '/', '%']
 relational_operators = [">", "<", ">=", "<=", "==", "!="]
 logic_operator = ["&&", "||", "!"]
 ascii_list = [chr(i) for i in range(128)]
-text_lists:list = []
+line_lists:list = []
+functions_list: list = ['keyword_identifier', 'id_identifier', 'punctuator_identifier', 'comment_identifier', 'number_identifier',
+                        'staticString_identifier', 'staticChar_identifier', 'operator_identifier', 'whitespace']
+Type :dict = {
+    "bool": "T_Bool",
+    "break": "T_Break",
+    "char": "T_Char",
+    "continue": "T_Continue",
+    "else": "T_Else",
+    "false": "T_False",
+    "for": "T_For",
+    "if": "T_If",
+    "int": "T_Int",
+    "print": "T_Print",
+    "return": "T_Return",
+    "true": "T_True",
+    '(': 'T_LP',
+    ')': 'T_RP',
+    '{': 'T_LC',
+    '}': 'T_RC',
+    '[': 'T_LB',
+    ']': 'T_RB',
+    ';': 'T_Semicolon',
+    ',': 'T_Comma',
+    '+': "T_AOp_PL",
+    '-': "T_AOp_MN",
+    '*': "T_AOp_ML",
+    '/': "T_AOp_DV",
+    '%': "T_AOp_RM",
+    '=': "T_Assign",
+    '<': 'T_ROp_L',
+    '>': 'T_ROp_G',
+    '!': 'T_LOp_NOT',
+    '<=': 'T_ROp_LE',
+    '>=': 'T_ROp_LE',
+    '!=': 'T_ROp_NE',
+    '==': 'T_ROp_E',
+    '&&': 'T_LOp_AND',
+    '||': 'T_LOp_OR',
+}
+#کلمات کلیدی1.1
+KEYWORDS = {
+    "bool": "T_Bool",
+    "break": "T_Break",
+    "char": "T_Char",
+    "continue": "T_Continue",
+    "else": "T_Else",
+    "false": "T_False",
+    "for": "T_For",
+    "if": "T_If",
+    "int": "T_Int",
+    "print": "T_Print",
+    "return": "T_Return",
+    "true": "T_True",
+}
+
+#علامت های نشانه گذاری 3.1
+Symbol = {
+    '(': 'T_LP',
+    ')': 'T_RP',
+    '{': 'T_LC',
+    '}': 'T_RC',
+    '[': 'T_LB',
+    ']': 'T_RB',
+    ';': 'T_Semicolon',
+    ',': 'T_Comma',
+}
+
+#عملگرهای تک حرفی
+SINGLE_CHAR_OPERATORS = {
+    '+': "T_AOp_PL",
+    '-': "T_AOp_MN",
+    '*': "T_AOp_ML",
+    '/': "T_AOp_DV",
+    '%': "T_AOp_RM",
+    '=': "T_Assign",
+    '<': 'T_ROp_L',
+    '>': 'T_ROp_G',
+    '!': 'T_LOp_NOT',
+}
+#عملگرهای دو حرفی
+DOUBLE_CHAR_OPERATORS = {
+    '<=': 'T_ROp_LE',
+    '>=': 'T_ROp_LE',
+    '!=': 'T_ROp_NE',
+    '==': 'T_ROp_E',
+    '&&': 'T_LOp_AND',
+    '||': 'T_LOp_OR',
+
+}
 def is_digit(character):
     return '0' <= character <= '9'
 
@@ -118,12 +208,72 @@ def operator_identifier(string: str):
 def whitespace(string: str):
     return string == ' ' or string == '\t' or string == '\n'
 
-def read_file():
-    file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\PycharmProjects')
-    with open(file_path, 'r') as file:
-        global text_lists
-        while True:
-            line = file.readline()
-            if not line:
-                break
-            text_lists.append(line)
+# def read_file():
+#     file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\PycharmProjects')
+#     with open(file_path, 'r') as file:
+#         global line_lists
+#         while True:
+#             line = file.readline()
+#             if not line:
+#                 break
+#             line_lists.append(line)
+def analyzer():
+    line_lists = ['int test_function(int a, int b, bool c){']
+    symboleTable = SymbolTable.SymbolTable()
+    index: int = 0
+    global functions_list
+    for line in line_lists:
+        iterator_text = ''
+        prev_flag = False
+        curr_flag = False
+        prev_funct = ''
+        curr_funct = ''
+        i = -1
+        for a in range(len(line)):
+            i += 1
+            iterator_text += line[i]
+            curr_flag = False
+            curr_funct = ''
+            for funct in functions_list:
+                funct_name = getattr(sys.modules[__name__], funct)
+                flag = funct_name(iterator_text)
+                if flag:
+                    curr_flag = flag
+                    curr_funct = funct
+                if curr_flag == False and funct == functions_list[len(functions_list) - 1]:
+                    curr_flag = False
+                    curr_funct = funct
+            if curr_flag == False and prev_flag:
+                Token = iterator_text[: -1]
+                i -= 1
+                iterator_text = ''
+                type: str = ''
+                if prev_funct == 'staticChar_identifier':
+                    type = 'T_Character'
+                elif prev_funct == 'staticString_identifier':
+                    type = 'T_String'
+                elif prev_funct == 'number_identifier':
+                    type = 'T_Decimal'
+                elif prev_funct == 'comment_identifier':
+                    type = 'T_Comment'
+                elif prev_funct == 'id_identifier':
+                    type = 'T_Id'
+                else:
+                    type = Type[Token]
+                symboleTable.insert_entry(name= Token, type= type, location= index, length= len(Token), value= None)
+            elif curr_flag and curr_funct == 'whitespace':
+                # Fill symbol table by whitespace token
+                type = 'T_Whitespace'
+                Token = iterator_text
+                iterator_text = ''
+                symboleTable.insert_entry(name=Token, type=type, value=None, location=index, length=len(Token))
+                if iterator_text == '\t':
+                    index += 1
+
+            else:
+                prev_flag = curr_flag
+                prev_funct = curr_funct
+            index += 1
+    return SymbolTable
+st = analyzer()
+print('successfully')
