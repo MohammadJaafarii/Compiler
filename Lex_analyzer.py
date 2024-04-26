@@ -130,6 +130,8 @@ def numberdecimal_identifier(string:str):
 def staticString_identifier(string:str):
     Token = ''
     i = 0
+    if string[len(string) - 1] == '"' and string[len(string) -2 ] == '\\':
+        return False
     if len(string) > 2 and string[0] == '"' and string[len(string) - 1] == '"':
         Token += '"'
         i += 1
@@ -219,7 +221,8 @@ def analyzer():
                     type = 'T_Id'
                 else:
                     type = Type[Token]
-                symboleTable.insert_entry(name= Token, type= type, location= index, length= len(Token), value= None)
+                    prev_flag = False
+                symboleTable.insert_entry(name= Token, type= type, location= (index - len(Token)), length= len(Token), value= None)
             elif curr_flag and curr_funct == 'whitespace':
                 # Fill symbol table by whitespace token
                 type = 'T_Whitespace'
@@ -227,7 +230,7 @@ def analyzer():
                 iterator_text = ''
                 prev_flag = False
                 prev_funct = ''
-                symboleTable.insert_entry(name=Token, type=type, value=None, location=index, length=len(Token))
+                symboleTable.insert_entry(name=Token, type=type, value=None, location=(index - len(Token)), length=len(Token))
                 if iterator_text == '\t':
                     index += 1
 
