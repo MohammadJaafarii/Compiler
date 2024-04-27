@@ -4,11 +4,10 @@ Types = ['T_Bool', 'T_Breal', 'T_Char', 'T_Continue', 'T_Else', 'T_False', 'T_Fo
          'T_ROp_L', 'T_ROp_G', 'T_ROp_LE', 'T_ROp_GE', 'T_ROp_NE', 'T_ROp_E', 'T_ⅬOp_AND', 'T_LOp_OR', 'T_LOp_NOT'
     , 'T_Assign', 'T_LP', 'T_RP', 'T_LC', 'T_RC', 'T_LB', 'T_RB', 'T_Semicolon', 'T_Comma', 'T_Id', 'T_Decimal'
     , 'T_Hexadecimal', 'T_String', 'T_Character', 'T_Comment', 'T_Whitespace']
-
 id:int = 0
 
 class Token:
-    def __init__(self, name, type, location, length, value=None):
+    def __init__(self, name, type, location, length, value=None, line=0):
         global id
         self.id = id
         self.name = name
@@ -16,6 +15,7 @@ class Token:
         self.location = location
         self.length = length
         self.value = value
+        self.line = line
         id += 1
 
 
@@ -27,18 +27,19 @@ class SymbolTable:
         #dic for table
         self.entries = {}
 
-    def insert_entry(self, name, type, value, location, length):
+    def insert_entry(self, name, type, value, location, length, line):
         if name in self.entries:
             raise  ValueError(f"this name {name} is in table before")
 
-        token = Token(name,type,location,length,value)
+        token = Token(name,type,location,length,value, line)
 
         self.entries[token.id] = {
             "name" : token.name,
             "type" :token.type,
             "value" : token.value,
             "location" : token.location,
-            "length" : token.length
+            "length" : token.length,
+            'line' : line
         }
 
     def get_entry(self, id):

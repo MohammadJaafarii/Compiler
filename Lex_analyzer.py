@@ -131,6 +131,7 @@ def numberdecimal_identifier(string:str):
 def staticString_identifier(string:str):
     Token = ''
     i = 0
+
     if string[len(string) - 1] == '"' and string[len(string) -2 ] == '\\':
         return False
     if len(string) > 2 and string[0] == '"' and string[len(string) - 1] == '"':
@@ -170,7 +171,7 @@ def whitespace(string: str):
     return string == ' ' or string == '\t' or string == '\n'
 
 def read_file():
-    file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\PycharmProjects')
+    file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\Desktop')
     with open(file_path, 'r') as file:
         global line_lists
         while True:
@@ -179,18 +180,20 @@ def read_file():
                 break
             line_lists.append(line)
 def analyzer():
-    #line_lists = ['	print(\"this is\\" a whole string no other token like \'=\' or \'else\' or even \\\\comment should be recogized\");\n']
     index: int = 0
     start_index = 0
     global functions_list
+    line_index = 1
+    add_last_line = False
     for line in line_lists:
         iterator_text = ''
         prev_flag = False
         prev_funct = ''
         i = 0
-        if line == line_lists[len(line_lists) - 1]:
+        if line == line_lists[-1] and not (line[-1] == ' ' or line[-1] == '\t' or line[-1] == '\n') :
             line += ' '
             line_lists[-1] += ' '
+            add_last_line = True
         while i < len(line):
             iterator_text += line[i]
             curr_flag = False
@@ -224,7 +227,7 @@ def analyzer():
                 else:
                     type = Type[Token]
                     prev_flag = False
-                symboleTable.insert_entry(name= Token, type= type, location= start_index, length= len(Token), value= None)
+                symboleTable.insert_entry(name= Token, type= type, location= start_index, length= len(Token), value= None, line=line_index)
                 start_index += len(Token)
             elif curr_flag and curr_funct == 'whitespace':
                 # Fill symbol table by whitespace token
@@ -233,8 +236,8 @@ def analyzer():
                 iterator_text = ''
                 prev_flag = False
                 prev_funct = ''
-                if not (line == line_lists[len(line_lists) - 1] and line[-1] == ' '):
-                    symboleTable.insert_entry(name=Token, type=type, value=None, location=start_index, length=len(Token))
+                if not (Token == line[-1] and add_last_line):
+                    symboleTable.insert_entry(name=Token, type=type, value=None, location=start_index, length=len(Token), line=line_index)
                     start_index += len(Token)
                 if iterator_text == '\t':
                     index += 1
@@ -244,6 +247,7 @@ def analyzer():
                 prev_funct = curr_funct
             index += 1
             i += 1
+        line_index += 1
 
 
 
@@ -252,17 +256,17 @@ if __name__ == '__main__':
     read_file()
     analyzer()
     prettytable_list = []
-    table = PrettyTable(['Location', 'Name', 'Type'])
+    table = PrettyTable(['Location', 'Name', 'Type', 'line'])
     file = open('output.txt', 'w')
     for key in symboleTable.entries:
         if not (symboleTable.entries[key]['name'] == ' ' or symboleTable.entries[key]['name'] == '\t' or symboleTable.entries[key]['name'] == '\n'):
-            str = f"{symboleTable.entries[key]['location']}: {symboleTable.entries[key]['name']} -> {symboleTable.entries[key]['type']}\n"
+            str = f"{symboleTable.entries[key]['location']}: {symboleTable.entries[key]['name']} -> {symboleTable.entries[key]['type']} | line -> {symboleTable.entries[key]['line']}\n"
             file.write(str)
-            prettytable_list.append([symboleTable.entries[key]['location'], symboleTable.entries[key]['name'], symboleTable.entries[key]['type']])
+            prettytable_list.append([symboleTable.entries[key]['location'], symboleTable.entries[key]['name'], symboleTable.entries[key]['type'], symboleTable.entries[key]['line']])
         else:
-            str = f"{symboleTable.entries[key]['location']}: whitespace -> {symboleTable.entries[key]['type']}\n"
+            str = f"{symboleTable.entries[key]['location']}: whitespace -> {symboleTable.entries[key]['type']} | line -> {symboleTable.entries[key]['line']}\n"
             file.write(str)
-            prettytable_list.append([symboleTable.entries[key]['location'], 'whitespace',symboleTable.entries[key]['type']])
+            prettytable_list.append([symboleTable.entries[key]['location'], 'whitespace',symboleTable.entries[key]['type'], symboleTable.entries[key]['line']])
     file.close()
     for row in prettytable_list:
         table.add_row(row)

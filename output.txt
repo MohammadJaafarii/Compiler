@@ -1,498 +1,671 @@
-0: int -> T_Int
-3: whitespace -> T_Whitespace
-4: test_function -> T_Id
-17: ( -> T_LP
-18: int -> T_Int
-21: whitespace -> T_Whitespace
-22: a -> T_Id
-23: , -> T_Comma
-24: whitespace -> T_Whitespace
-25: int -> T_Int
-28: whitespace -> T_Whitespace
-29: b -> T_Id
-30: , -> T_Comma
-31: whitespace -> T_Whitespace
-32: bool -> T_Bool
-36: whitespace -> T_Whitespace
-37: c -> T_Id
-38: ) -> T_RP
-39: { -> T_LC
-40: whitespace -> T_Whitespace
-41: whitespace -> T_Whitespace
-42: // this is a function -> T_Comment
-63: whitespace -> T_Whitespace
-64: whitespace -> T_Whitespace
-65: if -> T_If
-67: whitespace -> T_Whitespace
-68: ( -> T_LP
-69: c -> T_Id
-70: whitespace -> T_Whitespace
-71: == -> T_ROp_E
-73: whitespace -> T_Whitespace
-74: true -> T_True
-78: ) -> T_RP
-79: { -> T_LC
-80: whitespace -> T_Whitespace
-81: whitespace -> T_Whitespace
-82: whitespace -> T_Whitespace
-83: return -> T_Return
-89: whitespace -> T_Whitespace
-90: a -> T_Id
-91: + -> T_AOp_PL
-92: b -> T_Id
-93: ; -> T_Semicolon
-94: whitespace -> T_Whitespace
-95: whitespace -> T_Whitespace
-96: } -> T_RC
-97: whitespace -> T_Whitespace
-98: whitespace -> T_Whitespace
-99: else -> T_Else
-103: whitespace -> T_Whitespace
-104: { -> T_LC
-105: whitespace -> T_Whitespace
-106: whitespace -> T_Whitespace
-107: whitespace -> T_Whitespace
-108: return -> T_Return
-114: whitespace -> T_Whitespace
-115: a -> T_Id
-116: - -> T_AOp_MN
-117: b -> T_Id
-118: ; -> T_Semicolon
-119: whitespace -> T_Whitespace
-120: whitespace -> T_Whitespace
-121: } -> T_RC
-122: whitespace -> T_Whitespace
-123: } -> T_RC
-124: whitespace -> T_Whitespace
-125: whitespace -> T_Whitespace
-126: int -> T_Int
-129: whitespace -> T_Whitespace
-130: main -> T_Id
-134: ( -> T_LP
-135: ) -> T_RP
-136: { -> T_LC
-137: whitespace -> T_Whitespace
-138: whitespace -> T_Whitespace
-139: bool -> T_Bool
-143: whitespace -> T_Whitespace
-144: add -> T_Id
-147: whitespace -> T_Whitespace
-148: = -> T_Assign
-149: whitespace -> T_Whitespace
-150: true -> T_True
-154: ; -> T_Semicolon
-155: whitespace -> T_Whitespace
-156: whitespace -> T_Whitespace
-157: char -> T_Char
-161: whitespace -> T_Whitespace
-162: _assign1 -> T_Id
-170: whitespace -> T_Whitespace
-171: = -> T_Assign
-172: whitespace -> T_Whitespace
-173: '=' -> T_Character
-176: ; -> T_Semicolon
-177: whitespace -> T_Whitespace
-178: whitespace -> T_Whitespace
-179: char -> T_Char
-183: whitespace -> T_Whitespace
-184: String_1 -> T_Id
-192: [ -> T_LB
-193: ] -> T_RB
-194: whitespace -> T_Whitespace
-195: = -> T_Assign
-196: whitespace -> T_Whitespace
-197: " + " -> T_String
-202: ; -> T_Semicolon
-203: whitespace -> T_Whitespace
-204: whitespace -> T_Whitespace
-205: char -> T_Char
-209: whitespace -> T_Whitespace
-210: String_2 -> T_Id
-218: [ -> T_LB
-219: ] -> T_RB
-220: whitespace -> T_Whitespace
-221: = -> T_Assign
-222: whitespace -> T_Whitespace
-223: " - " -> T_String
-228: ; -> T_Semicolon
-229: whitespace -> T_Whitespace
-230: whitespace -> T_Whitespace
-231: for -> T_For
-234: ( -> T_LP
-235: int -> T_Int
-238: whitespace -> T_Whitespace
-239: i -> T_Id
-240: whitespace -> T_Whitespace
-241: = -> T_Assign
-242: whitespace -> T_Whitespace
-243: 0 -> T_Decimal
-244: ; -> T_Semicolon
-245: whitespace -> T_Whitespace
-246: i -> T_Id
-247: whitespace -> T_Whitespace
-248: <= -> T_ROp_LE
-250: whitespace -> T_Whitespace
-251: ( -> T_LP
-252: +10 -> T_Decimal
-255: whitespace -> T_Whitespace
-256: / -> T_AOp_DV
-257: whitespace -> T_Whitespace
-258: 2 -> T_Decimal
-259: ) -> T_RP
-260: ; -> T_Semicolon
-261: whitespace -> T_Whitespace
-262: i -> T_Id
-263: whitespace -> T_Whitespace
-264: = -> T_Assign
-265: whitespace -> T_Whitespace
-266: i -> T_Id
-267: whitespace -> T_Whitespace
-268: + -> T_AOp_PL
-269: whitespace -> T_Whitespace
-270: 1 -> T_Decimal
-271: ) -> T_RP
-272: { -> T_LC
-273: whitespace -> T_Whitespace
-274: whitespace -> T_Whitespace
-275: whitespace -> T_Whitespace
-276: for -> T_For
-279: whitespace -> T_Whitespace
-280: ( -> T_LP
-281: int -> T_Int
-284: whitespace -> T_Whitespace
-285: j -> T_Id
-286: whitespace -> T_Whitespace
-287: = -> T_Assign
-288: whitespace -> T_Whitespace
-289: 0x0 -> T_Hexadecimal
-292: ; -> T_Semicolon
-293: whitespace -> T_Whitespace
-294: j -> T_Id
-295: whitespace -> T_Whitespace
-296: != -> T_ROp_NE
-298: whitespace -> T_Whitespace
-299: ( -> T_LP
-300: 5 -> T_Decimal
-301: whitespace -> T_Whitespace
-302: * -> T_AOp_ML
-303: whitespace -> T_Whitespace
-304: -1 -> T_Decimal
-306: ) -> T_RP
-307: whitespace -> T_Whitespace
-308: whitespace -> T_Whitespace
-309: ; -> T_Semicolon
-310: whitespace -> T_Whitespace
-311: j -> T_Id
-312: whitespace -> T_Whitespace
-313: = -> T_Assign
-314: whitespace -> T_Whitespace
-315: j -> T_Id
-316: whitespace -> T_Whitespace
-317: - -> T_AOp_MN
-318: whitespace -> T_Whitespace
-319: 1 -> T_Decimal
-320: ) -> T_RP
-321: { -> T_LC
-322: whitespace -> T_Whitespace
-323: whitespace -> T_Whitespace
-324: whitespace -> T_Whitespace
-325: whitespace -> T_Whitespace
-326: print -> T_Print
-331: ( -> T_LP
-332: i -> T_Id
-333: ) -> T_RP
-334: ; -> T_Semicolon
-335: whitespace -> T_Whitespace
-336: whitespace -> T_Whitespace
-337: whitespace -> T_Whitespace
-338: whitespace -> T_Whitespace
-339: print -> T_Print
-344: ( -> T_LP
-345: String_1 -> T_Id
-353: ) -> T_RP
-354: ; -> T_Semicolon
-355: whitespace -> T_Whitespace
-356: whitespace -> T_Whitespace
-357: whitespace -> T_Whitespace
-358: whitespace -> T_Whitespace
-359: print -> T_Print
-364: ( -> T_LP
-365: j -> T_Id
-366: ) -> T_RP
-367: ; -> T_Semicolon
-368: whitespace -> T_Whitespace
-369: whitespace -> T_Whitespace
-370: whitespace -> T_Whitespace
-371: whitespace -> T_Whitespace
-372: print -> T_Print
-377: ( -> T_LP
-378: _assign1 -> T_Id
-386: ) -> T_RP
-387: ; -> T_Semicolon
-388: whitespace -> T_Whitespace
-389: whitespace -> T_Whitespace
-390: whitespace -> T_Whitespace
-391: whitespace -> T_Whitespace
-392: print -> T_Print
-397: ( -> T_LP
-398: test_function -> T_Id
-411: ( -> T_LP
-412: i -> T_Id
-413: , -> T_Comma
-414: j -> T_Id
-415: , -> T_Comma
-416: add -> T_Id
-419: ) -> T_RP
-420: ) -> T_RP
-421: ; -> T_Semicolon
-422: whitespace -> T_Whitespace
-423: whitespace -> T_Whitespace
-424: whitespace -> T_Whitespace
-425: } -> T_RC
-426: whitespace -> T_Whitespace
-427: whitespace -> T_Whitespace
-428: } -> T_RC
-429: whitespace -> T_Whitespace
-430: whitespace -> T_Whitespace
-431: add -> T_Id
-434: whitespace -> T_Whitespace
-435: = -> T_Assign
-436: whitespace -> T_Whitespace
-437: false -> T_False
-442: ; -> T_Semicolon
-443: whitespace -> T_Whitespace
-444: whitespace -> T_Whitespace
-445: for -> T_For
-448: whitespace -> T_Whitespace
-449: ( -> T_LP
-450: int -> T_Int
-453: whitespace -> T_Whitespace
-454: i -> T_Id
-455: whitespace -> T_Whitespace
-456: = -> T_Assign
-457: whitespace -> T_Whitespace
-458: 0 -> T_Decimal
-459: ; -> T_Semicolon
-460: whitespace -> T_Whitespace
-461: ! -> T_LOp_NOT
-462: ( -> T_LP
-463: i -> T_Id
-464: whitespace -> T_Whitespace
-465: == -> T_ROp_E
-467: whitespace -> T_Whitespace
-468: +5 -> T_Decimal
-470: ) -> T_RP
-471: ; -> T_Semicolon
-472: whitespace -> T_Whitespace
-473: i -> T_Id
-474: whitespace -> T_Whitespace
-475: = -> T_Assign
-476: whitespace -> T_Whitespace
-477: i -> T_Id
-478: whitespace -> T_Whitespace
-479: + -> T_AOp_PL
-480: whitespace -> T_Whitespace
-481: 1 -> T_Decimal
-482: ) -> T_RP
-483: whitespace -> T_Whitespace
-484: { -> T_LC
-485: whitespace -> T_Whitespace
-486: whitespace -> T_Whitespace
-487: whitespace -> T_Whitespace
-488: for -> T_For
-491: whitespace -> T_Whitespace
-492: ( -> T_LP
-493: int -> T_Int
-496: whitespace -> T_Whitespace
-497: j -> T_Id
-498: whitespace -> T_Whitespace
-499: = -> T_Assign
-500: whitespace -> T_Whitespace
-501: 0x0 -> T_Hexadecimal
-504: ; -> T_Semicolon
-505: whitespace -> T_Whitespace
-506: j -> T_Id
-507: whitespace -> T_Whitespace
-508: >= -> T_ROp_LE
-510: whitespace -> T_Whitespace
-511: -5 -> T_Decimal
-513: ; -> T_Semicolon
-514: whitespace -> T_Whitespace
-515: j -> T_Id
-516: whitespace -> T_Whitespace
-517: = -> T_Assign
-518: whitespace -> T_Whitespace
-519: j -> T_Id
-520: whitespace -> T_Whitespace
-521: - -> T_AOp_MN
-522: whitespace -> T_Whitespace
-523: 1 -> T_Decimal
-524: ) -> T_RP
-525: whitespace -> T_Whitespace
-526: { -> T_LC
-527: whitespace -> T_Whitespace
-528: whitespace -> T_Whitespace
-529: whitespace -> T_Whitespace
-530: whitespace -> T_Whitespace
-531: if -> T_If
-533: ( -> T_LP
-534: ( -> T_LP
-535: i -> T_Id
-536: whitespace -> T_Whitespace
-537: % -> T_AOp_RM
-538: whitespace -> T_Whitespace
-539: 4 -> T_Decimal
-540: ) -> T_RP
-541: whitespace -> T_Whitespace
-542: == -> T_ROp_E
-544: whitespace -> T_Whitespace
-545: 0 -> T_Decimal
-546: whitespace -> T_Whitespace
-547: || -> T_LOp_OR
-549: whitespace -> T_Whitespace
-550: ( -> T_LP
-551: i -> T_Id
-552: whitespace -> T_Whitespace
-553: % -> T_AOp_RM
-554: whitespace -> T_Whitespace
-555: 3 -> T_Decimal
-556: ) -> T_RP
-557: whitespace -> T_Whitespace
-558: == -> T_ROp_E
-560: whitespace -> T_Whitespace
-561: 0 -> T_Decimal
-562: ) -> T_RP
-563: whitespace -> T_Whitespace
-564: whitespace -> T_Whitespace
-565: whitespace -> T_Whitespace
-566: whitespace -> T_Whitespace
-567: whitespace -> T_Whitespace
-568: continue -> T_Continue
-576: ; -> T_Semicolon
-577: whitespace -> T_Whitespace
-578: whitespace -> T_Whitespace
-579: whitespace -> T_Whitespace
-580: whitespace -> T_Whitespace
-581: if -> T_If
-583: ( -> T_LP
-584: j -> T_Id
-585: whitespace -> T_Whitespace
-586: < -> T_ROp_L
-587: whitespace -> T_Whitespace
-588: -4 -> T_Decimal
-590: whitespace -> T_Whitespace
-591: && -> T_LOp_AND
-593: whitespace -> T_Whitespace
-594: i -> T_Id
-595: whitespace -> T_Whitespace
-596: > -> T_ROp_G
-597: whitespace -> T_Whitespace
-598: 3 -> T_Decimal
-599: ) -> T_RP
-600: whitespace -> T_Whitespace
-601: whitespace -> T_Whitespace
-602: whitespace -> T_Whitespace
-603: whitespace -> T_Whitespace
-604: whitespace -> T_Whitespace
-605: break -> T_Break
-610: ; -> T_Semicolon
-611: whitespace -> T_Whitespace
-612: whitespace -> T_Whitespace
-613: whitespace -> T_Whitespace
-614: whitespace -> T_Whitespace
-615: print -> T_Print
-620: ( -> T_LP
-621: i -> T_Id
-622: ) -> T_RP
-623: ; -> T_Semicolon
-624: whitespace -> T_Whitespace
-625: whitespace -> T_Whitespace
-626: whitespace -> T_Whitespace
-627: whitespace -> T_Whitespace
-628: print -> T_Print
-633: ( -> T_LP
-634: String_2 -> T_Id
-642: ) -> T_RP
-643: ; -> T_Semicolon
-644: whitespace -> T_Whitespace
-645: whitespace -> T_Whitespace
-646: whitespace -> T_Whitespace
-647: whitespace -> T_Whitespace
-648: print -> T_Print
-653: ( -> T_LP
-654: j -> T_Id
-655: ) -> T_RP
-656: ; -> T_Semicolon
-657: whitespace -> T_Whitespace
-658: whitespace -> T_Whitespace
-659: whitespace -> T_Whitespace
-660: whitespace -> T_Whitespace
-661: print -> T_Print
-666: ( -> T_LP
-667: _assign1 -> T_Id
-675: ) -> T_RP
-676: ; -> T_Semicolon
-677: whitespace -> T_Whitespace
-678: whitespace -> T_Whitespace
-679: whitespace -> T_Whitespace
-680: whitespace -> T_Whitespace
-681: print -> T_Print
-686: ( -> T_LP
-687: test_function -> T_Id
-700: ( -> T_LP
-701: i -> T_Id
-702: , -> T_Comma
-703: whitespace -> T_Whitespace
-704: j -> T_Id
-705: , -> T_Comma
-706: whitespace -> T_Whitespace
-707: add -> T_Id
-710: ) -> T_RP
-711: ) -> T_RP
-712: ; -> T_Semicolon
-713: whitespace -> T_Whitespace
-714: whitespace -> T_Whitespace
-715: whitespace -> T_Whitespace
-716: } -> T_RC
-717: whitespace -> T_Whitespace
-718: whitespace -> T_Whitespace
-719: } -> T_RC
-720: whitespace -> T_Whitespace
-721: whitespace -> T_Whitespace
-722: print -> T_Print
-727: ( -> T_LP
-728: "this is\" a whole string no other token like '=' or 'else' or even \\\\comment should be recogized" -> T_String
-828: ) -> T_RP
-829: ; -> T_Semicolon
-830: whitespace -> T_Whitespace
-831: whitespace -> T_Whitespace
-832: char -> T_Char
-836: whitespace -> T_Whitespace
-837: back -> T_Id
-841: whitespace -> T_Whitespace
-842: = -> T_Assign
-843: whitespace -> T_Whitespace
-844: '\\' -> T_Character
-848: ; -> T_Semicolon
-849: whitespace -> T_Whitespace
-850: whitespace -> T_Whitespace
-851: char -> T_Char
-855: whitespace -> T_Whitespace
-856: quote -> T_Id
-861: whitespace -> T_Whitespace
-862: = -> T_Assign
-863: whitespace -> T_Whitespace
-864: '\'' -> T_Character
-868: ; -> T_Semicolon
-869: whitespace -> T_Whitespace
-870: whitespace -> T_Whitespace
-871: int -> T_Int
-874: whitespace -> T_Whitespace
-875: _123 -> T_Id
-879: whitespace -> T_Whitespace
-880: = -> T_Assign
-881: whitespace -> T_Whitespace
-882: 0XABCdef1230 -> T_Hexadecimal
-894: ; -> T_Semicolon
-895: whitespace -> T_Whitespace
-896: } -> T_RC
+0: bool -> T_Bool | line -> 1
+4: whitespace -> T_Whitespace | line -> 1
+5: test_function -> T_Id | line -> 1
+18: ( -> T_LP | line -> 1
+19: int -> T_Int | line -> 1
+22: whitespace -> T_Whitespace | line -> 1
+23: a -> T_Id | line -> 1
+24: , -> T_Comma | line -> 1
+25: whitespace -> T_Whitespace | line -> 1
+26: int -> T_Int | line -> 1
+29: whitespace -> T_Whitespace | line -> 1
+30: b -> T_Id | line -> 1
+31: , -> T_Comma | line -> 1
+32: whitespace -> T_Whitespace | line -> 1
+33: bool -> T_Bool | line -> 1
+37: whitespace -> T_Whitespace | line -> 1
+38: c -> T_Id | line -> 1
+39: ) -> T_RP | line -> 1
+40: whitespace -> T_Whitespace | line -> 1
+41: { -> T_LC | line -> 1
+42: whitespace -> T_Whitespace | line -> 1
+43: whitespace -> T_Whitespace | line -> 2
+44: whitespace -> T_Whitespace | line -> 2
+45: whitespace -> T_Whitespace | line -> 2
+46: whitespace -> T_Whitespace | line -> 2
+47: if -> T_If | line -> 2
+49: whitespace -> T_Whitespace | line -> 2
+50: ( -> T_LP | line -> 2
+51: c -> T_Id | line -> 2
+52: whitespace -> T_Whitespace | line -> 2
+53: == -> T_ROp_E | line -> 2
+55: whitespace -> T_Whitespace | line -> 2
+56: true -> T_True | line -> 2
+60: ) -> T_RP | line -> 2
+61: whitespace -> T_Whitespace | line -> 2
+62: { -> T_LC | line -> 2
+63: whitespace -> T_Whitespace | line -> 2
+64: whitespace -> T_Whitespace | line -> 3
+65: whitespace -> T_Whitespace | line -> 3
+66: whitespace -> T_Whitespace | line -> 3
+67: whitespace -> T_Whitespace | line -> 3
+68: whitespace -> T_Whitespace | line -> 3
+69: whitespace -> T_Whitespace | line -> 3
+70: whitespace -> T_Whitespace | line -> 3
+71: whitespace -> T_Whitespace | line -> 3
+72: return -> T_Return | line -> 3
+78: whitespace -> T_Whitespace | line -> 3
+79: a -> T_Id | line -> 3
+80: whitespace -> T_Whitespace | line -> 3
+81: + -> T_AOp_PL | line -> 3
+82: whitespace -> T_Whitespace | line -> 3
+83: b -> T_Id | line -> 3
+84: ; -> T_Semicolon | line -> 3
+85: whitespace -> T_Whitespace | line -> 3
+86: whitespace -> T_Whitespace | line -> 4
+87: whitespace -> T_Whitespace | line -> 4
+88: whitespace -> T_Whitespace | line -> 4
+89: whitespace -> T_Whitespace | line -> 4
+90: } -> T_RC | line -> 4
+91: whitespace -> T_Whitespace | line -> 4
+92: else -> T_Else | line -> 4
+96: whitespace -> T_Whitespace | line -> 4
+97: { -> T_LC | line -> 4
+98: whitespace -> T_Whitespace | line -> 4
+99: whitespace -> T_Whitespace | line -> 5
+100: whitespace -> T_Whitespace | line -> 5
+101: whitespace -> T_Whitespace | line -> 5
+102: whitespace -> T_Whitespace | line -> 5
+103: whitespace -> T_Whitespace | line -> 5
+104: whitespace -> T_Whitespace | line -> 5
+105: whitespace -> T_Whitespace | line -> 5
+106: whitespace -> T_Whitespace | line -> 5
+107: return -> T_Return | line -> 5
+113: whitespace -> T_Whitespace | line -> 5
+114: a -> T_Id | line -> 5
+115: whitespace -> T_Whitespace | line -> 5
+116: - -> T_AOp_MN | line -> 5
+117: whitespace -> T_Whitespace | line -> 5
+118: b -> T_Id | line -> 5
+119: ; -> T_Semicolon | line -> 5
+120: whitespace -> T_Whitespace | line -> 5
+121: whitespace -> T_Whitespace | line -> 6
+122: whitespace -> T_Whitespace | line -> 6
+123: whitespace -> T_Whitespace | line -> 6
+124: whitespace -> T_Whitespace | line -> 6
+125: } -> T_RC | line -> 6
+126: whitespace -> T_Whitespace | line -> 6
+127: } -> T_RC | line -> 7
+128: whitespace -> T_Whitespace | line -> 7
+129: whitespace -> T_Whitespace | line -> 8
+130: int -> T_Int | line -> 9
+133: whitespace -> T_Whitespace | line -> 9
+134: main -> T_Id | line -> 9
+138: ( -> T_LP | line -> 9
+139: ) -> T_RP | line -> 9
+140: whitespace -> T_Whitespace | line -> 9
+141: { -> T_LC | line -> 9
+142: whitespace -> T_Whitespace | line -> 9
+143: whitespace -> T_Whitespace | line -> 10
+144: whitespace -> T_Whitespace | line -> 10
+145: whitespace -> T_Whitespace | line -> 10
+146: whitespace -> T_Whitespace | line -> 10
+147: bool -> T_Bool | line -> 10
+151: whitespace -> T_Whitespace | line -> 10
+152: add -> T_Id | line -> 10
+155: whitespace -> T_Whitespace | line -> 10
+156: = -> T_Assign | line -> 10
+157: whitespace -> T_Whitespace | line -> 10
+158: true -> T_True | line -> 10
+162: ; -> T_Semicolon | line -> 10
+163: whitespace -> T_Whitespace | line -> 10
+164: whitespace -> T_Whitespace | line -> 11
+165: whitespace -> T_Whitespace | line -> 11
+166: whitespace -> T_Whitespace | line -> 11
+167: whitespace -> T_Whitespace | line -> 11
+168: char -> T_Char | line -> 11
+172: whitespace -> T_Whitespace | line -> 11
+173: _assign1 -> T_Id | line -> 11
+181: whitespace -> T_Whitespace | line -> 11
+182: = -> T_Assign | line -> 11
+183: whitespace -> T_Whitespace | line -> 11
+184: '=' -> T_Character | line -> 11
+187: ; -> T_Semicolon | line -> 11
+188: whitespace -> T_Whitespace | line -> 11
+189: whitespace -> T_Whitespace | line -> 12
+190: whitespace -> T_Whitespace | line -> 12
+191: whitespace -> T_Whitespace | line -> 12
+192: whitespace -> T_Whitespace | line -> 12
+193: char -> T_Char | line -> 12
+197: whitespace -> T_Whitespace | line -> 12
+198: String_1 -> T_Id | line -> 12
+206: [ -> T_LB | line -> 12
+207: ] -> T_RB | line -> 12
+208: whitespace -> T_Whitespace | line -> 12
+209: = -> T_Assign | line -> 12
+210: whitespace -> T_Whitespace | line -> 12
+211: " + " -> T_String | line -> 12
+216: ; -> T_Semicolon | line -> 12
+217: whitespace -> T_Whitespace | line -> 12
+218: whitespace -> T_Whitespace | line -> 13
+219: whitespace -> T_Whitespace | line -> 13
+220: whitespace -> T_Whitespace | line -> 13
+221: whitespace -> T_Whitespace | line -> 13
+222: char -> T_Char | line -> 13
+226: whitespace -> T_Whitespace | line -> 13
+227: String_2 -> T_Id | line -> 13
+235: [ -> T_LB | line -> 13
+236: ] -> T_RB | line -> 13
+237: whitespace -> T_Whitespace | line -> 13
+238: = -> T_Assign | line -> 13
+239: whitespace -> T_Whitespace | line -> 13
+240: " - " -> T_String | line -> 13
+245: ; -> T_Semicolon | line -> 13
+246: whitespace -> T_Whitespace | line -> 13
+247: whitespace -> T_Whitespace | line -> 14
+248: whitespace -> T_Whitespace | line -> 14
+249: whitespace -> T_Whitespace | line -> 14
+250: whitespace -> T_Whitespace | line -> 14
+251: int -> T_Int | line -> 14
+254: whitespace -> T_Whitespace | line -> 14
+255: _num1 -> T_Id | line -> 14
+260: whitespace -> T_Whitespace | line -> 14
+261: = -> T_Assign | line -> 14
+262: whitespace -> T_Whitespace | line -> 14
+263: 10 -> T_Decimal | line -> 14
+265: ; -> T_Semicolon | line -> 14
+266: whitespace -> T_Whitespace | line -> 14
+267: whitespace -> T_Whitespace | line -> 15
+268: whitespace -> T_Whitespace | line -> 15
+269: whitespace -> T_Whitespace | line -> 15
+270: whitespace -> T_Whitespace | line -> 15
+271: int -> T_Int | line -> 15
+274: whitespace -> T_Whitespace | line -> 15
+275: _num2 -> T_Id | line -> 15
+280: whitespace -> T_Whitespace | line -> 15
+281: = -> T_Assign | line -> 15
+282: whitespace -> T_Whitespace | line -> 15
+283: 5 -> T_Decimal | line -> 15
+284: ; -> T_Semicolon | line -> 15
+285: whitespace -> T_Whitespace | line -> 15
+286: whitespace -> T_Whitespace | line -> 16
+287: whitespace -> T_Whitespace | line -> 16
+288: whitespace -> T_Whitespace | line -> 16
+289: whitespace -> T_Whitespace | line -> 16
+290: int -> T_Int | line -> 16
+293: whitespace -> T_Whitespace | line -> 16
+294: _result -> T_Id | line -> 16
+301: whitespace -> T_Whitespace | line -> 16
+302: = -> T_Assign | line -> 16
+303: whitespace -> T_Whitespace | line -> 16
+304: 0 -> T_Decimal | line -> 16
+305: ; -> T_Semicolon | line -> 16
+306: whitespace -> T_Whitespace | line -> 16
+307: whitespace -> T_Whitespace | line -> 17
+308: whitespace -> T_Whitespace | line -> 18
+309: whitespace -> T_Whitespace | line -> 18
+310: whitespace -> T_Whitespace | line -> 18
+311: whitespace -> T_Whitespace | line -> 18
+312: for -> T_For | line -> 18
+315: whitespace -> T_Whitespace | line -> 18
+316: ( -> T_LP | line -> 18
+317: int -> T_Int | line -> 18
+320: whitespace -> T_Whitespace | line -> 18
+321: i -> T_Id | line -> 18
+322: whitespace -> T_Whitespace | line -> 18
+323: = -> T_Assign | line -> 18
+324: whitespace -> T_Whitespace | line -> 18
+325: 0 -> T_Decimal | line -> 18
+326: ; -> T_Semicolon | line -> 18
+327: whitespace -> T_Whitespace | line -> 18
+328: i -> T_Id | line -> 18
+329: whitespace -> T_Whitespace | line -> 18
+330: <= -> T_ROp_LE | line -> 18
+332: whitespace -> T_Whitespace | line -> 18
+333: num1 -> T_Id | line -> 18
+337: whitespace -> T_Whitespace | line -> 18
+338: / -> T_AOp_DV | line -> 18
+339: whitespace -> T_Whitespace | line -> 18
+340: 2 -> T_Decimal | line -> 18
+341: ; -> T_Semicolon | line -> 18
+342: whitespace -> T_Whitespace | line -> 18
+343: i -> T_Id | line -> 18
+344: whitespace -> T_Whitespace | line -> 18
+345: = -> T_Assign | line -> 18
+346: whitespace -> T_Whitespace | line -> 18
+347: i -> T_Id | line -> 18
+348: whitespace -> T_Whitespace | line -> 18
+349: + -> T_AOp_PL | line -> 18
+350: whitespace -> T_Whitespace | line -> 18
+351: 1 -> T_Decimal | line -> 18
+352: ) -> T_RP | line -> 18
+353: whitespace -> T_Whitespace | line -> 18
+354: { -> T_LC | line -> 18
+355: whitespace -> T_Whitespace | line -> 18
+356: whitespace -> T_Whitespace | line -> 19
+357: whitespace -> T_Whitespace | line -> 19
+358: whitespace -> T_Whitespace | line -> 19
+359: whitespace -> T_Whitespace | line -> 19
+360: whitespace -> T_Whitespace | line -> 19
+361: whitespace -> T_Whitespace | line -> 19
+362: whitespace -> T_Whitespace | line -> 19
+363: whitespace -> T_Whitespace | line -> 19
+364: for -> T_For | line -> 19
+367: whitespace -> T_Whitespace | line -> 19
+368: ( -> T_LP | line -> 19
+369: int -> T_Int | line -> 19
+372: whitespace -> T_Whitespace | line -> 19
+373: j -> T_Id | line -> 19
+374: whitespace -> T_Whitespace | line -> 19
+375: = -> T_Assign | line -> 19
+376: whitespace -> T_Whitespace | line -> 19
+377: 0 -> T_Decimal | line -> 19
+378: ; -> T_Semicolon | line -> 19
+379: whitespace -> T_Whitespace | line -> 19
+380: j -> T_Id | line -> 19
+381: whitespace -> T_Whitespace | line -> 19
+382: != -> T_ROp_NE | line -> 19
+384: whitespace -> T_Whitespace | line -> 19
+385: num2 -> T_Id | line -> 19
+389: whitespace -> T_Whitespace | line -> 19
+390: * -> T_AOp_ML | line -> 19
+391: whitespace -> T_Whitespace | line -> 19
+392: -1 -> T_Decimal | line -> 19
+394: ; -> T_Semicolon | line -> 19
+395: whitespace -> T_Whitespace | line -> 19
+396: j -> T_Id | line -> 19
+397: whitespace -> T_Whitespace | line -> 19
+398: = -> T_Assign | line -> 19
+399: whitespace -> T_Whitespace | line -> 19
+400: j -> T_Id | line -> 19
+401: whitespace -> T_Whitespace | line -> 19
+402: - -> T_AOp_MN | line -> 19
+403: whitespace -> T_Whitespace | line -> 19
+404: 1 -> T_Decimal | line -> 19
+405: ) -> T_RP | line -> 19
+406: whitespace -> T_Whitespace | line -> 19
+407: { -> T_LC | line -> 19
+408: whitespace -> T_Whitespace | line -> 19
+409: whitespace -> T_Whitespace | line -> 20
+410: whitespace -> T_Whitespace | line -> 20
+411: whitespace -> T_Whitespace | line -> 20
+412: whitespace -> T_Whitespace | line -> 20
+413: whitespace -> T_Whitespace | line -> 20
+414: whitespace -> T_Whitespace | line -> 20
+415: whitespace -> T_Whitespace | line -> 20
+416: whitespace -> T_Whitespace | line -> 20
+417: whitespace -> T_Whitespace | line -> 20
+418: whitespace -> T_Whitespace | line -> 20
+419: whitespace -> T_Whitespace | line -> 20
+420: whitespace -> T_Whitespace | line -> 20
+421: _result -> T_Id | line -> 20
+428: whitespace -> T_Whitespace | line -> 20
+429: = -> T_Assign | line -> 20
+430: whitespace -> T_Whitespace | line -> 20
+431: i -> T_Id | line -> 20
+432: whitespace -> T_Whitespace | line -> 20
+433: + -> T_AOp_PL | line -> 20
+434: whitespace -> T_Whitespace | line -> 20
+435: j -> T_Id | line -> 20
+436: ; -> T_Semicolon | line -> 20
+437: whitespace -> T_Whitespace | line -> 20
+438: whitespace -> T_Whitespace | line -> 21
+439: whitespace -> T_Whitespace | line -> 21
+440: whitespace -> T_Whitespace | line -> 21
+441: whitespace -> T_Whitespace | line -> 21
+442: whitespace -> T_Whitespace | line -> 21
+443: whitespace -> T_Whitespace | line -> 21
+444: whitespace -> T_Whitespace | line -> 21
+445: whitespace -> T_Whitespace | line -> 21
+446: whitespace -> T_Whitespace | line -> 21
+447: whitespace -> T_Whitespace | line -> 21
+448: whitespace -> T_Whitespace | line -> 21
+449: whitespace -> T_Whitespace | line -> 21
+450: print -> T_Print | line -> 21
+455: ( -> T_LP | line -> 21
+456: "Result: " -> T_String | line -> 21
+466: , -> T_Comma | line -> 21
+467: whitespace -> T_Whitespace | line -> 21
+468: result -> T_Id | line -> 21
+474: ) -> T_RP | line -> 21
+475: ; -> T_Semicolon | line -> 21
+476: whitespace -> T_Whitespace | line -> 21
+477: whitespace -> T_Whitespace | line -> 22
+478: whitespace -> T_Whitespace | line -> 22
+479: whitespace -> T_Whitespace | line -> 22
+480: whitespace -> T_Whitespace | line -> 22
+481: whitespace -> T_Whitespace | line -> 22
+482: whitespace -> T_Whitespace | line -> 22
+483: whitespace -> T_Whitespace | line -> 22
+484: whitespace -> T_Whitespace | line -> 22
+485: } -> T_RC | line -> 22
+486: whitespace -> T_Whitespace | line -> 22
+487: whitespace -> T_Whitespace | line -> 23
+488: whitespace -> T_Whitespace | line -> 23
+489: whitespace -> T_Whitespace | line -> 23
+490: whitespace -> T_Whitespace | line -> 23
+491: } -> T_RC | line -> 23
+492: whitespace -> T_Whitespace | line -> 23
+493: whitespace -> T_Whitespace | line -> 24
+494: whitespace -> T_Whitespace | line -> 25
+495: whitespace -> T_Whitespace | line -> 25
+496: whitespace -> T_Whitespace | line -> 25
+497: whitespace -> T_Whitespace | line -> 25
+498: add -> T_Id | line -> 25
+501: whitespace -> T_Whitespace | line -> 25
+502: = -> T_Assign | line -> 25
+503: whitespace -> T_Whitespace | line -> 25
+504: false -> T_False | line -> 25
+509: ; -> T_Semicolon | line -> 25
+510: whitespace -> T_Whitespace | line -> 25
+511: whitespace -> T_Whitespace | line -> 26
+512: whitespace -> T_Whitespace | line -> 26
+513: whitespace -> T_Whitespace | line -> 26
+514: whitespace -> T_Whitespace | line -> 26
+515: for -> T_For | line -> 26
+518: whitespace -> T_Whitespace | line -> 26
+519: ( -> T_LP | line -> 26
+520: int -> T_Int | line -> 26
+523: whitespace -> T_Whitespace | line -> 26
+524: i -> T_Id | line -> 26
+525: whitespace -> T_Whitespace | line -> 26
+526: = -> T_Assign | line -> 26
+527: whitespace -> T_Whitespace | line -> 26
+528: 0 -> T_Decimal | line -> 26
+529: ; -> T_Semicolon | line -> 26
+530: whitespace -> T_Whitespace | line -> 26
+531: ! -> T_LOp_NOT | line -> 26
+532: ( -> T_LP | line -> 26
+533: i -> T_Id | line -> 26
+534: whitespace -> T_Whitespace | line -> 26
+535: == -> T_ROp_E | line -> 26
+537: whitespace -> T_Whitespace | line -> 26
+538: 5 -> T_Decimal | line -> 26
+539: ) -> T_RP | line -> 26
+540: ; -> T_Semicolon | line -> 26
+541: whitespace -> T_Whitespace | line -> 26
+542: i -> T_Id | line -> 26
+543: whitespace -> T_Whitespace | line -> 26
+544: = -> T_Assign | line -> 26
+545: whitespace -> T_Whitespace | line -> 26
+546: i -> T_Id | line -> 26
+547: whitespace -> T_Whitespace | line -> 26
+548: + -> T_AOp_PL | line -> 26
+549: whitespace -> T_Whitespace | line -> 26
+550: 1 -> T_Decimal | line -> 26
+551: ) -> T_RP | line -> 26
+552: whitespace -> T_Whitespace | line -> 26
+553: { -> T_LC | line -> 26
+554: whitespace -> T_Whitespace | line -> 26
+555: whitespace -> T_Whitespace | line -> 27
+556: whitespace -> T_Whitespace | line -> 27
+557: whitespace -> T_Whitespace | line -> 27
+558: whitespace -> T_Whitespace | line -> 27
+559: whitespace -> T_Whitespace | line -> 27
+560: whitespace -> T_Whitespace | line -> 27
+561: whitespace -> T_Whitespace | line -> 27
+562: whitespace -> T_Whitespace | line -> 27
+563: for -> T_For | line -> 27
+566: whitespace -> T_Whitespace | line -> 27
+567: ( -> T_LP | line -> 27
+568: int -> T_Int | line -> 27
+571: whitespace -> T_Whitespace | line -> 27
+572: j -> T_Id | line -> 27
+573: whitespace -> T_Whitespace | line -> 27
+574: = -> T_Assign | line -> 27
+575: whitespace -> T_Whitespace | line -> 27
+576: 0 -> T_Decimal | line -> 27
+577: ; -> T_Semicolon | line -> 27
+578: whitespace -> T_Whitespace | line -> 27
+579: j -> T_Id | line -> 27
+580: whitespace -> T_Whitespace | line -> 27
+581: >= -> T_ROp_LE | line -> 27
+583: whitespace -> T_Whitespace | line -> 27
+584: -5 -> T_Decimal | line -> 27
+586: ; -> T_Semicolon | line -> 27
+587: whitespace -> T_Whitespace | line -> 27
+588: j -> T_Id | line -> 27
+589: whitespace -> T_Whitespace | line -> 27
+590: = -> T_Assign | line -> 27
+591: whitespace -> T_Whitespace | line -> 27
+592: j -> T_Id | line -> 27
+593: whitespace -> T_Whitespace | line -> 27
+594: - -> T_AOp_MN | line -> 27
+595: whitespace -> T_Whitespace | line -> 27
+596: 1 -> T_Decimal | line -> 27
+597: ) -> T_RP | line -> 27
+598: whitespace -> T_Whitespace | line -> 27
+599: { -> T_LC | line -> 27
+600: whitespace -> T_Whitespace | line -> 27
+601: whitespace -> T_Whitespace | line -> 28
+602: whitespace -> T_Whitespace | line -> 28
+603: whitespace -> T_Whitespace | line -> 28
+604: whitespace -> T_Whitespace | line -> 28
+605: whitespace -> T_Whitespace | line -> 28
+606: whitespace -> T_Whitespace | line -> 28
+607: whitespace -> T_Whitespace | line -> 28
+608: whitespace -> T_Whitespace | line -> 28
+609: whitespace -> T_Whitespace | line -> 28
+610: whitespace -> T_Whitespace | line -> 28
+611: whitespace -> T_Whitespace | line -> 28
+612: whitespace -> T_Whitespace | line -> 28
+613: if -> T_If | line -> 28
+615: whitespace -> T_Whitespace | line -> 28
+616: ( -> T_LP | line -> 28
+617: ( -> T_LP | line -> 28
+618: i -> T_Id | line -> 28
+619: whitespace -> T_Whitespace | line -> 28
+620: % -> T_AOp_RM | line -> 28
+621: whitespace -> T_Whitespace | line -> 28
+622: 4 -> T_Decimal | line -> 28
+623: ) -> T_RP | line -> 28
+624: whitespace -> T_Whitespace | line -> 28
+625: == -> T_ROp_E | line -> 28
+627: whitespace -> T_Whitespace | line -> 28
+628: 0 -> T_Decimal | line -> 28
+629: whitespace -> T_Whitespace | line -> 28
+630: || -> T_LOp_OR | line -> 28
+632: whitespace -> T_Whitespace | line -> 28
+633: ( -> T_LP | line -> 28
+634: i -> T_Id | line -> 28
+635: whitespace -> T_Whitespace | line -> 28
+636: % -> T_AOp_RM | line -> 28
+637: whitespace -> T_Whitespace | line -> 28
+638: 3 -> T_Decimal | line -> 28
+639: ) -> T_RP | line -> 28
+640: whitespace -> T_Whitespace | line -> 28
+641: == -> T_ROp_E | line -> 28
+643: whitespace -> T_Whitespace | line -> 28
+644: 0 -> T_Decimal | line -> 28
+645: ) -> T_RP | line -> 28
+646: whitespace -> T_Whitespace | line -> 28
+647: whitespace -> T_Whitespace | line -> 29
+648: whitespace -> T_Whitespace | line -> 29
+649: whitespace -> T_Whitespace | line -> 29
+650: whitespace -> T_Whitespace | line -> 29
+651: whitespace -> T_Whitespace | line -> 29
+652: whitespace -> T_Whitespace | line -> 29
+653: whitespace -> T_Whitespace | line -> 29
+654: whitespace -> T_Whitespace | line -> 29
+655: whitespace -> T_Whitespace | line -> 29
+656: whitespace -> T_Whitespace | line -> 29
+657: whitespace -> T_Whitespace | line -> 29
+658: whitespace -> T_Whitespace | line -> 29
+659: whitespace -> T_Whitespace | line -> 29
+660: whitespace -> T_Whitespace | line -> 29
+661: whitespace -> T_Whitespace | line -> 29
+662: whitespace -> T_Whitespace | line -> 29
+663: continue -> T_Continue | line -> 29
+671: ; -> T_Semicolon | line -> 29
+672: whitespace -> T_Whitespace | line -> 29
+673: whitespace -> T_Whitespace | line -> 30
+674: whitespace -> T_Whitespace | line -> 30
+675: whitespace -> T_Whitespace | line -> 30
+676: whitespace -> T_Whitespace | line -> 30
+677: whitespace -> T_Whitespace | line -> 30
+678: whitespace -> T_Whitespace | line -> 30
+679: whitespace -> T_Whitespace | line -> 30
+680: whitespace -> T_Whitespace | line -> 30
+681: whitespace -> T_Whitespace | line -> 30
+682: whitespace -> T_Whitespace | line -> 30
+683: whitespace -> T_Whitespace | line -> 30
+684: whitespace -> T_Whitespace | line -> 30
+685: if -> T_If | line -> 30
+687: whitespace -> T_Whitespace | line -> 30
+688: ( -> T_LP | line -> 30
+689: j -> T_Id | line -> 30
+690: whitespace -> T_Whitespace | line -> 30
+691: < -> T_ROp_L | line -> 30
+692: whitespace -> T_Whitespace | line -> 30
+693: -4 -> T_Decimal | line -> 30
+695: whitespace -> T_Whitespace | line -> 30
+696: && -> T_LOp_AND | line -> 30
+698: whitespace -> T_Whitespace | line -> 30
+699: i -> T_Id | line -> 30
+700: whitespace -> T_Whitespace | line -> 30
+701: > -> T_ROp_G | line -> 30
+702: whitespace -> T_Whitespace | line -> 30
+703: 3 -> T_Decimal | line -> 30
+704: ) -> T_RP | line -> 30
+705: whitespace -> T_Whitespace | line -> 30
+706: whitespace -> T_Whitespace | line -> 31
+707: whitespace -> T_Whitespace | line -> 31
+708: whitespace -> T_Whitespace | line -> 31
+709: whitespace -> T_Whitespace | line -> 31
+710: whitespace -> T_Whitespace | line -> 31
+711: whitespace -> T_Whitespace | line -> 31
+712: whitespace -> T_Whitespace | line -> 31
+713: whitespace -> T_Whitespace | line -> 31
+714: whitespace -> T_Whitespace | line -> 31
+715: whitespace -> T_Whitespace | line -> 31
+716: whitespace -> T_Whitespace | line -> 31
+717: whitespace -> T_Whitespace | line -> 31
+718: whitespace -> T_Whitespace | line -> 31
+719: whitespace -> T_Whitespace | line -> 31
+720: whitespace -> T_Whitespace | line -> 31
+721: whitespace -> T_Whitespace | line -> 31
+722: break -> T_Break | line -> 31
+727: ; -> T_Semicolon | line -> 31
+728: whitespace -> T_Whitespace | line -> 31
+729: whitespace -> T_Whitespace | line -> 32
+730: whitespace -> T_Whitespace | line -> 32
+731: whitespace -> T_Whitespace | line -> 32
+732: whitespace -> T_Whitespace | line -> 32
+733: whitespace -> T_Whitespace | line -> 32
+734: whitespace -> T_Whitespace | line -> 32
+735: whitespace -> T_Whitespace | line -> 32
+736: whitespace -> T_Whitespace | line -> 32
+737: whitespace -> T_Whitespace | line -> 32
+738: whitespace -> T_Whitespace | line -> 32
+739: whitespace -> T_Whitespace | line -> 32
+740: whitespace -> T_Whitespace | line -> 32
+741: _result -> T_Id | line -> 32
+748: whitespace -> T_Whitespace | line -> 32
+749: = -> T_Assign | line -> 32
+750: whitespace -> T_Whitespace | line -> 32
+751: i -> T_Id | line -> 32
+752: whitespace -> T_Whitespace | line -> 32
+753: - -> T_AOp_MN | line -> 32
+754: whitespace -> T_Whitespace | line -> 32
+755: j -> T_Id | line -> 32
+756: ; -> T_Semicolon | line -> 32
+757: whitespace -> T_Whitespace | line -> 32
+758: whitespace -> T_Whitespace | line -> 33
+759: whitespace -> T_Whitespace | line -> 33
+760: whitespace -> T_Whitespace | line -> 33
+761: whitespace -> T_Whitespace | line -> 33
+762: whitespace -> T_Whitespace | line -> 33
+763: whitespace -> T_Whitespace | line -> 33
+764: whitespace -> T_Whitespace | line -> 33
+765: whitespace -> T_Whitespace | line -> 33
+766: whitespace -> T_Whitespace | line -> 33
+767: whitespace -> T_Whitespace | line -> 33
+768: whitespace -> T_Whitespace | line -> 33
+769: whitespace -> T_Whitespace | line -> 33
+770: print -> T_Print | line -> 33
+775: ( -> T_LP | line -> 33
+776: "Result: " -> T_String | line -> 33
+786: , -> T_Comma | line -> 33
+787: whitespace -> T_Whitespace | line -> 33
+788: _result -> T_Id | line -> 33
+795: ) -> T_RP | line -> 33
+796: ; -> T_Semicolon | line -> 33
+797: whitespace -> T_Whitespace | line -> 33
+798: whitespace -> T_Whitespace | line -> 34
+799: whitespace -> T_Whitespace | line -> 34
+800: whitespace -> T_Whitespace | line -> 34
+801: whitespace -> T_Whitespace | line -> 34
+802: whitespace -> T_Whitespace | line -> 34
+803: whitespace -> T_Whitespace | line -> 34
+804: whitespace -> T_Whitespace | line -> 34
+805: whitespace -> T_Whitespace | line -> 34
+806: } -> T_RC | line -> 34
+807: whitespace -> T_Whitespace | line -> 34
+808: whitespace -> T_Whitespace | line -> 35
+809: whitespace -> T_Whitespace | line -> 35
+810: whitespace -> T_Whitespace | line -> 35
+811: whitespace -> T_Whitespace | line -> 35
+812: } -> T_RC | line -> 35
+813: whitespace -> T_Whitespace | line -> 35
+814: whitespace -> T_Whitespace | line -> 36
+815: whitespace -> T_Whitespace | line -> 37
+816: whitespace -> T_Whitespace | line -> 37
+817: whitespace -> T_Whitespace | line -> 37
+818: whitespace -> T_Whitespace | line -> 37
+819: print -> T_Print | line -> 37
+824: ( -> T_LP | line -> 37
+825: "Test string with escaped characters: " -> T_String | line -> 37
+864: ) -> T_RP | line -> 37
+865: ; -> T_Semicolon | line -> 37
+866: whitespace -> T_Whitespace | line -> 37
+867: whitespace -> T_Whitespace | line -> 38
+868: whitespace -> T_Whitespace | line -> 38
+869: whitespace -> T_Whitespace | line -> 38
+870: whitespace -> T_Whitespace | line -> 38
+871: print -> T_Print | line -> 38
+876: ( -> T_LP | line -> 38
+877: "\\n newline, \\t tab, \\r carriage return." -> T_String | line -> 38
+921: ) -> T_RP | line -> 38
+922: ; -> T_Semicolon | line -> 38
+923: whitespace -> T_Whitespace | line -> 38
+924: whitespace -> T_Whitespace | line -> 39
+925: whitespace -> T_Whitespace | line -> 40
+926: print -> T_Print | line -> 40
+931: ( -> T_LP | line -> 40
+932: "this is\" a whole string no other token like '=' or 'else' or even \\\\comment should be recognized" -> T_String | line -> 40
+1033: ) -> T_RP | line -> 40
+1034: ; -> T_Semicolon | line -> 40
+1035: whitespace -> T_Whitespace | line -> 40
+1036: whitespace -> T_Whitespace | line -> 41
+1037: char -> T_Char | line -> 41
+1041: whitespace -> T_Whitespace | line -> 41
+1042: back -> T_Id | line -> 41
+1046: whitespace -> T_Whitespace | line -> 41
+1047: = -> T_Assign | line -> 41
+1048: whitespace -> T_Whitespace | line -> 41
+1049: '\\' -> T_Character | line -> 41
+1053: ; -> T_Semicolon | line -> 41
+1054: whitespace -> T_Whitespace | line -> 41
+1055: whitespace -> T_Whitespace | line -> 42
+1056: char -> T_Char | line -> 42
+1060: whitespace -> T_Whitespace | line -> 42
+1061: quote -> T_Id | line -> 42
+1066: whitespace -> T_Whitespace | line -> 42
+1067: = -> T_Assign | line -> 42
+1068: whitespace -> T_Whitespace | line -> 42
+1069: '\'' -> T_Character | line -> 42
+1073: ; -> T_Semicolon | line -> 42
+1074: whitespace -> T_Whitespace | line -> 42
+1075: whitespace -> T_Whitespace | line -> 43
+1076: int -> T_Int | line -> 43
+1079: whitespace -> T_Whitespace | line -> 43
+1080: _123 -> T_Id | line -> 43
+1084: whitespace -> T_Whitespace | line -> 43
+1085: = -> T_Assign | line -> 43
+1086: whitespace -> T_Whitespace | line -> 43
+1087: 0XABCdef1230 -> T_Hexadecimal | line -> 43
+1099: ; -> T_Semicolon | line -> 43
+1100: whitespace -> T_Whitespace | line -> 43
+1101: whitespace -> T_Whitespace | line -> 44
+1102: whitespace -> T_Whitespace | line -> 45
+1103: whitespace -> T_Whitespace | line -> 45
+1104: whitespace -> T_Whitespace | line -> 45
+1105: whitespace -> T_Whitespace | line -> 45
+1106: return -> T_Return | line -> 45
+1112: whitespace -> T_Whitespace | line -> 45
+1113: 0 -> T_Decimal | line -> 45
+1114: ; -> T_Semicolon | line -> 45
+1115: whitespace -> T_Whitespace | line -> 45
+1116: whitespace -> T_Whitespace | line -> 45
+1117: } -> T_RC | line -> 46
+1118: whitespace -> T_Whitespace | line -> 46
