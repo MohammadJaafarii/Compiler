@@ -1,56 +1,17 @@
 import sys
 from tkinter import filedialog
-import SymbolTable
+from SymbolTable import SymbolTable, Token
 from prettytable import PrettyTable
-keyword: list = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', 'int', 'print', 'return', 'true']
-punctuator: list = ['{', '}', '(', ')', '[', ']', ',', ';']
-hex: list = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f']
-arithmetic_operator = ['+', '-', '*', '/', '%', '=']
-relational_operators = [">", "<", ">=", "<=", "==", "!="]
-logic_operator = ["&&", "||", "!"]
-ascii_list = [chr(i) for i in range(128)]
+from element_lists import *
 line_lists:list = []
-functions_list: list = ['keyword_identifier', 'id_identifier', 'punctuator_identifier', 'comment_identifier', 'numberdecimal_identifier','numberhex_identifier',
-                        'staticString_identifier', 'staticChar_identifier', 'operator_identifier', 'whitespace']
-Type :dict = {
-    "bool": "T_Bool",
-    "break": "T_Break",
-    "char": "T_Char",
-    "continue": "T_Continue",
-    "else": "T_Else",
-    "false": "T_False",
-    "for": "T_For",
-    "if": "T_If",
-    "int": "T_Int",
-    "print": "T_Print",
-    "return": "T_Return",
-    "true": "T_True",
-    '(': 'T_LP',
-    ')': 'T_RP',
-    '{': 'T_LC',
-    '}': 'T_RC',
-    '[': 'T_LB',
-    ']': 'T_RB',
-    ';': 'T_Semicolon',
-    ',': 'T_Comma',
-    '+': "T_AOp_PL",
-    '-': "T_AOp_MN",
-    '*': "T_AOp_ML",
-    '/': "T_AOp_DV",
-    '%': "T_AOp_RM",
-    '=': "T_Assign",
-    '<': 'T_ROp_L',
-    '>': 'T_ROp_G',
-    '!': 'T_LOp_NOT',
-    '<=': 'T_ROp_LE',
-    '>=': 'T_ROp_LE',
-    '!=': 'T_ROp_NE',
-    '==': 'T_ROp_E',
-    '&&': 'T_LOp_AND',
-    '||': 'T_LOp_OR',
-}
+invalid_tokens: Token = []
+start_index: int = 0
+line_index: int = 1
+line_start_index: int = 0
+functions_list: list = ['keyword_identifier', 'id_identifier', 'punctuator_identifier', 'comment_identifier', 'numberhex_identifier', 'numberdecimal_identifier',
+                        'staticString_identifier', 'staticChar_identifier', 'operator_identifier', 'whitespace_identifier']
 
-symboleTable = SymbolTable.SymbolTable()
+symboleTable = SymbolTable()
 def is_digit(character):
     return '0' <= character <= '9'
 
@@ -58,120 +19,164 @@ def is_alpha(character):
     return 'a' <= character <= 'z' or 'A' <= character <= 'Z'
 
 
-def keyword_identifier(string:str):
-    global keyword
-    if string in keyword:
-        return True
-    return False
-def id_identifier(string: str):
-    i = 1
-    Token = ''
-    if is_alpha(string[0]) or string[0] == '_':
-        Token += string[0]
-        while i < len(string):
-            if is_alpha(string[i]) or is_digit(string[i]) or string[i] == '_':
-                Token += string[i]
-            i += 1
-    global keyword
-    if Token in keyword:
-        return False
-    return Token == string
+def keyword_identifier(line: str, iterator: int):
+    global start_index, line_start_index, line_index, KEYWORDS
+    token = ''
+    while iterator < len(line) and is_alpha(line[iterator]):
+        token += line[iterator]
+        iterator += 1
 
-def punctuator_identifier(character: str):
-    global punctuator
-    if character in punctuator and len(character) == 1:
-        return True
-    return False
-def comment_identifier(string: str):
-    if len(string) >= 2 and string[0] == '/' and string[1] == '/' and string[-1] != '\n':
-        return True
-    return False
-def numberhex_identifier(string:str):
-    global hex
-    i = 0
-    Token = ''
-    # hex detector
-    x = len(string)
-    if len(string) >= 2 and (string[0:2] == '0x' or string[0:2] == '0X'):
-        if  len(string) > 2:
-            Token += string[0:2]
-            i = 2
-            if string[i] in hex:
-                Token += string[i]
-                i += 1
-                while i < len(string) and string[i] in hex:
-                    Token += string[i]
-                    i += 1
-                if i < len(string) and string[i] == '.':
-                    Token += string[i]
-                    i += 1
-                    while i < len(string) and string[i] in hex:
-                        Token += string[i]
-                        i += 1
+    if token in KEYWORDS:
+        tk = Token(name=token, type=KEYWORDS[token], value=None,location=start_index,
+                                                     length=len(token), line=line_index)
+        return tk
+    return None
+def id_identifier(line: str, iterator: int):
+    token = ''
+    if not (is_alpha(line[iterator]) or line[iterator] == '_'): # Valid char for starting ID
+        return None
+
+    while iterator < len(line) and (is_alpha(line[iterator]) or is_alpha(line[iterator]) or line[iterator] == '_'):
+        token += line[iterator]
+        iterator += 1
+
+    global KEYWORDS
+    if not token in KEYWORDS:
+        tk = Token(name=token, type='T_Id', value=None,location=start_index,
+                                             length=len(token), line=line_index)
+        return tk
+    return None
+
+def punctuator_identifier(line: str, iterator: int):
+    global SYMBOL
+    token = ''
+    if line[iterator] in SYMBOL:
+        token += line[iterator]
+        tk = Token(name=token, type= SYMBOL[token], value=None, location=start_index, length=len(token), line=line_index)
+        return tk
+    return None
+def comment_identifier(line: str, iterator: int):
+    if not line[iterator: iterator+2] == '//':
+        return None
+    token = ''
+    while iterator < len(line) and line[iterator] != '\n':
+        token += line[iterator]
+        iterator += 1
+    if token and line[iterator] == '\n':
+        tk = Token(name=token, type= 'T_Comment', value=None, location=start_index,
+                     length=len(token), line=line_index)
+        return tk
+    return None
+
+# hex detector
+def numberhex_identifier(line: str, iterator: int):
+    global HEX
+    token = ''
+    if not line [iterator: iterator+2].lower() =='0x':
+        return None
+    else:
+        token += line [iterator: iterator+2]
+        iterator += 2
+    while iterator < len(line):
+        if line[iterator] in HEX:
+            token += line[iterator]
+            iterator += 1
+        elif line[iterator] =='.':
+            token += line[iterator]
+            iterator += 1
         else:
-            Token = string
-    return Token == string
-    # decimal detector
-def numberdecimal_identifier(string:str):
-    i = 0
-    Token = ''
-    if is_digit(string[i]) or string[i] == '+' or string[i] == '-':
-        Token += string[i]
-        i += 1
-        while i < len(string) and is_digit(string[i]):
-            Token += string[i]
-            i += 1
-        if i < len(string) and string[i] == '.':
-            Token += '.'
-            i += 1
-            while i < len(string) and is_digit(string[i]):
-                Token += string[i]
-                i += 1
-    return Token == string
-def staticString_identifier(string:str):
-    Token = ''
-    i = 0
+            break
+    if not token:
+        return None
+    tk = Token(name=token, type= 'T_Hexadecimal', value=None, location=start_index,
+                     length=len(token), line=line_index)
+    return tk
 
-    if string[len(string) - 1] == '"' and string[len(string) -2 ] == '\\':
-        return False
-    if len(string) > 2 and string[0] == '"' and string[len(string) - 1] == '"':
-        Token += '"'
-        i += 1
-        while i < len(string) - 1:
-            if string[i] == '"':
-                if string[i-1] == '\\':
-                    Token += string[i]
-                i += 1
-                continue
-            Token += string[i]
-            i += 1
-        Token += '"'
-        i += 1
+# decimal detector
+def numberdecimal_identifier(line: str, iterator: int):
+    token = ''
+    if line[iterator] == '-' or line[iterator] =='+':
+        if (iterator+1 < len(line) and not is_digit(line[iterator+1])) or iterator + 1 == len(line):
+            return None
+    if line[iterator] == '+' or line[iterator] == '-':
+        token += line[iterator]
+        iterator += 1
+    while iterator < len(line):
+        if is_digit(line[iterator]):
+            token += line[iterator]
+            iterator += 1
+        elif line[iterator] == '.':
+            token += line[iterator]
+            iterator += 1
+        else:
+            break
+    if not token:
+        return None
+    else:
+        tk = Token(name=token, type= 'T_Decimal', value=None, location=start_index,
+                     length=len(token), line=line_index)
+        return tk
 
-    return Token == string
-def staticChar_identifier(string:str):
-    global ascii_list
+def staticString_identifier(line: str, iterator: int):
+    token = ''
+    if line[iterator] != '"':
+        return None
+    token += '"'
+    iterator += 1
+    while iterator < len(line) and line[iterator] != '"':
+        token += line[iterator]
+        if line[iterator] == '\\':
+            iterator += 1
+            token += line[iterator]
+        iterator += 1
+    if iterator < len(line) and line[iterator] == '"':
+        token += '"'
+        tk = Token(name=token, type= 'T_String', value=None, location=start_index,
+                     length=len(token), line=line_index)
+        return tk
+    return None
 
-    Token = ''
-    if len(string) > 2  and string[0] =="'" and string[len(string) - 1] == "'":
-        Token += "'"
-        if string[1:3] == "\\'" or string[1:3] == "\\\\":
-            Token += string[1:3]
-        elif string[1] in ascii_list:
-            Token += string[1]
-        Token += "'"
-    return Token == string
+def staticChar_identifier(line: str, iterator: int):
 
-def operator_identifier(string: str):
-    global arithmetic_operator, logic_operator, relational_operators
-    if string in arithmetic_operator or string in logic_operator or string in relational_operators:
+    token = ''
+    if line[iterator] != "'":
+        return None
+    token += "'"
+    iterator += 1
+    while iterator < len(line) and line [iterator] != "'" and line[iterator] in ASCII_LIST:
+        token += line[iterator]
+        if line[iterator] == '\\':
+            iterator += 1
+            token += line[iterator]
+        iterator += 1
+    if iterator < len(line) and line[iterator] == "'" and (len(token) in [2,3] or (len(token) == 4 and token[0] == '\\')):
+        token += "'"
+        tk = Token(name=token, type='T_Character', value=None, location=start_index,
+                     length=len(token), line=line_index)
+        return tk
+    return None
+def operator_identifier(line: str, iterator: int):
+    global DOUBLE_CHAR_OPERATORS, SINGLE_CHAR_OPERATORS
+    token = ''
+    if line[iterator: iterator+2] in DOUBLE_CHAR_OPERATORS:
+        token += line[iterator: iterator+2]
+        return Token(name= token, type= DOUBLE_CHAR_OPERATORS[token], value=None, location=start_index,
+                     length=len(token), line=line_index)
+    elif line[iterator] in SINGLE_CHAR_OPERATORS:
+        token += line[iterator]
+        tk = Token(name=token, type=SINGLE_CHAR_OPERATORS[token], value=None, location=start_index,
+                     length=len(token), line=line_index)
+        return tk
+    return None
+def whitespace_identifier(line: str, iterator: int):
+    if line[iterator] in WHITE_SPACES:
         return True
-    return False
-def whitespace(string: str):
-    return string == ' ' or string == '\t' or string == '\n'
+    return None
+
+
 
 def read_file():
-    file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\Desktop')
+    file_path = filedialog.askopenfilename(initialdir='C:\\Users\\User\\PycharmProjects\\Compiler')
     with open(file_path, 'r') as file:
         global line_lists
         while True:
@@ -179,74 +184,87 @@ def read_file():
             if not line:
                 break
             line_lists.append(line)
+def display_and_save():
+    prettytable_list = []
+    table = PrettyTable(['Location', 'Name', 'Type', 'line'])
+    file = open('output.txt', 'w')
+    for key in symboleTable.entries:
+        # Valid Tokens except WhiteSpaces
+        if not (symboleTable.entries[key]['name'] == ' ' or symboleTable.entries[key]['name'] == '\t' or
+                symboleTable.entries[key]['name'] == '\n') and not symboleTable.entries[key]['error']:
+            str = f"{symboleTable.entries[key]['location']}: {symboleTable.entries[key]['name']} -> {symboleTable.entries[key]['type']} | line -> {symboleTable.entries[key]['line']}\n"
+            file.write(str)
+            prettytable_list.append([symboleTable.entries[key]['location'], symboleTable.entries[key]['name'],
+                                     symboleTable.entries[key]['type'], symboleTable.entries[key]['line']])
+        # WhiteSpaces
+        elif not symboleTable.entries[key]['error']:
+            str = f"{symboleTable.entries[key]['location']}: whitespace -> {symboleTable.entries[key]['type']} | line -> {symboleTable.entries[key]['line']}\n"
+            file.write(str)
+            prettytable_list.append(
+                [symboleTable.entries[key]['location'], 'whitespace', symboleTable.entries[key]['type'],
+                 symboleTable.entries[key]['line']])
+        # Invalid Tokens
+        else:
+            red_color = "\033[31m"
+            reset_color = "\033[0m"
+            str = f"{symboleTable.entries[key]['location']}: Error -> {symboleTable.entries[key]['type']}\nName: {symboleTable.entries[key]['name']}  | line -> {symboleTable.entries[key]['line']}\n"
+            file.write(str)
+            prettytable_list.append([f'{red_color}{symboleTable.entries[key]['location']}{reset_color}', f'{red_color}{symboleTable.entries[key]['name']}{reset_color}', f'{red_color}{symboleTable.entries[key]['type']}{reset_color}',
+                                     f'{red_color}{symboleTable.entries[key]['line']}{reset_color}'])
+    file.close()
+    for row in prettytable_list:
+        table.add_row(row)
+    print(table)
 def analyzer():
-    index: int = 0
+    global functions_list, start_index, line_index, line_start_index
     start_index = 0
-    global functions_list
     line_index = 1
-    add_last_line = False
+    current_token: Token = None
+    previous_token: Token = None
+    token_founded = False
     for line in line_lists:
-        iterator_text = ''
-        prev_flag = False
-        prev_funct = ''
-        i = 0
-        if line == line_lists[-1] and not (line[-1] == ' ' or line[-1] == '\t' or line[-1] == '\n') :
-            line += ' '
-            line_lists[-1] += ' '
-            add_last_line = True
-        while i < len(line):
-            iterator_text += line[i]
-            curr_flag = False
-            curr_funct = ''
+        line_start_index = 0
+        while line_start_index < len(line):
+            token_founded = False
             for funct in functions_list:
                 funct_name = getattr(sys.modules[__name__], funct)
-                flag = funct_name(iterator_text)
-                if flag:
-                    curr_flag = flag
-                    curr_funct = funct
-                if curr_flag == False and funct == functions_list[len(functions_list) - 1]:
-                    curr_flag = False
-                    curr_funct = funct
-            if curr_flag == False and prev_flag:
-                Token = iterator_text[: -1]
-                i -= 1
-                iterator_text = ''
-                type: str = ''
-                if prev_funct == 'staticChar_identifier':
-                    type = 'T_Character'
-                elif prev_funct == 'staticString_identifier':
-                    type = 'T_String'
-                elif prev_funct == 'numberdecimal_identifier':
-                    type = 'T_Decimal'
-                elif prev_funct == 'numberhex_identifier':
-                    type = 'T_Hexadecimal'
-                elif prev_funct == 'comment_identifier':
-                    type = 'T_Comment'
-                elif prev_funct == 'id_identifier':
-                    type = 'T_Id'
-                else:
-                    type = Type[Token]
-                    prev_flag = False
-                symboleTable.insert_entry(name= Token, type= type, location= start_index, length= len(Token), value= None, line=line_index)
-                start_index += len(Token)
-            elif curr_flag and curr_funct == 'whitespace':
-                # Fill symbol table by whitespace token
-                type = 'T_Whitespace'
-                Token = iterator_text
-                iterator_text = ''
-                prev_flag = False
-                prev_funct = ''
-                if not (Token == line[-1] and add_last_line):
-                    symboleTable.insert_entry(name=Token, type=type, value=None, location=start_index, length=len(Token), line=line_index)
-                    start_index += len(Token)
-                if iterator_text == '\t':
-                    index += 1
+                token = funct_name(line, line_start_index)
+                if token == True:
+                    tk = Token(name=line[line_start_index], type='T_Whitespace', value=None, location=start_index,
+                     length=len(line[line_start_index]), line=line_index)
+                    current_token = tk
+                    symboleTable.insert_entry(tk)
+                    token_founded = True
+                    start_index += tk.length
+                    line_start_index += tk.length
+                    break
+                elif token is not None:
+                    current_token = token
+                    if previous_token is not None and((previous_token.type == 'T_Decimal' or previous_token.type == 'T_Hexadecimal') and current_token.type == 'T_Id'):
+                        symboleTable.delete_entry(previous_token.id)
+                        token.name = previous_token.name + current_token.name
+                        token.type = 'Invalid Token'
+                        token.length = previous_token.length + current_token.length
+                        token.location = previous_token.location
+                        token.error = True
 
-            else:
-                prev_flag = curr_flag
-                prev_funct = curr_funct
-            index += 1
-            i += 1
+
+                    symboleTable.insert_entry(token)
+                    token_founded = True
+                    start_index += token.length
+                    line_start_index += token.length
+                    break
+
+
+
+            if not token_founded:
+                tk = Token(name=line[line_start_index], type='Invalid Token', value=None, location=start_index,
+                     length=len(line[line_start_index]), line=line_index, error=True)
+                current_token = tk
+                symboleTable.insert_entry(tk)
+                start_index += 1
+                line_start_index += 1
+            previous_token = current_token
         line_index += 1
 
 
@@ -255,19 +273,4 @@ def analyzer():
 if __name__ == '__main__':
     read_file()
     analyzer()
-    prettytable_list = []
-    table = PrettyTable(['Location', 'Name', 'Type', 'line'])
-    file = open('output.txt', 'w')
-    for key in symboleTable.entries:
-        if not (symboleTable.entries[key]['name'] == ' ' or symboleTable.entries[key]['name'] == '\t' or symboleTable.entries[key]['name'] == '\n'):
-            str = f"{symboleTable.entries[key]['location']}: {symboleTable.entries[key]['name']} -> {symboleTable.entries[key]['type']} | line -> {symboleTable.entries[key]['line']}\n"
-            file.write(str)
-            prettytable_list.append([symboleTable.entries[key]['location'], symboleTable.entries[key]['name'], symboleTable.entries[key]['type'], symboleTable.entries[key]['line']])
-        else:
-            str = f"{symboleTable.entries[key]['location']}: whitespace -> {symboleTable.entries[key]['type']} | line -> {symboleTable.entries[key]['line']}\n"
-            file.write(str)
-            prettytable_list.append([symboleTable.entries[key]['location'], 'whitespace',symboleTable.entries[key]['type'], symboleTable.entries[key]['line']])
-    file.close()
-    for row in prettytable_list:
-        table.add_row(row)
-    print(table)
+    display_and_save()
