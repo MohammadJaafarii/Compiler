@@ -274,3 +274,12 @@ if __name__ == '__main__':
     read_file()
     analyzer()
     display_and_save()
+
+
+
+
+    'stmt': 'for_stmt',
+    'for_stmt': 'T_For T_LP opt_expr T_Semicolan opt_expr T_Semicolan opt_expr T_RP block',
+    'opt_expr': ['expr', 'epsilon'],
+    'expr': ['assignment', 'condition'],
+    'assignment': 'T_ID T_Assign expr',
