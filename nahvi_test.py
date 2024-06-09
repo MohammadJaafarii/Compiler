@@ -165,52 +165,65 @@ def first(rule):
 
 # follow function input is the split result on
 # - Non-Terminal whose Follow we want to compute
-def follow(nt, visited=None):
-    global start_symbol, rules, nonterm_userdef, term_userdef, diction, firsts, follows
+def follow(nt):
+    global start_symbol, rules, nonterm_userdef, \
+        term_userdef, diction, firsts, follows
+    # for start symbol return $ (recursion base case)
 
-    if visited is None:
-        visited = set()
-
-    # If the follow set for nt is already computed, return it
-    if nt in follows and follows[nt]:
-        return follows[nt]
-
-    # To avoid infinite recursion, use a visited set
-    if nt in visited:
-        return set()
-
-    # Add nt to visited to avoid processing it again in this call stack
-    visited.add(nt)
-
-    # For start symbol, add '$' to its follow set
     solset = set()
     if nt == start_symbol:
+        # return '$'
         solset.add('$')
 
-    # Iterate over all rules to find occurrences of the non-terminal
+    # check all occurrences
+    # solset - is result of computed 'follow' so far
+
+    # For input, check in all rules
     for curNT in diction:
-        for subrule in diction[curNT]:
+        rhs = diction[curNT]
+        # go for all productions of NT
+        for subrule in rhs:
             if nt in subrule:
+                # call for all occurrences on
+                # - non-terminal in subrule
                 while nt in subrule:
                     index_nt = subrule.index(nt)
                     subrule = subrule[index_nt + 1:]
-
+                    # empty condition - call follow on LHS
                     if len(subrule) != 0:
+                        # compute first if symbols on
+                        # - RHS of target Non-Terminal exists
                         res = first(subrule)
+                        # if epsilon in result apply rule
+                        # - (A->aBX)- follow of -
+                        # - follow(B)=(first(X)-{ep}) U follow(A)
                         if '#' in res:
+                            newList = []
                             res.remove('#')
-                            res.update(follow(curNT, visited))
-                        solset.add(res)
+                            ansNew = follow(curNT)
+                            if ansNew != None:
+                                if type(ansNew) is list:
+                                    newList = res + ansNew
+                                else:
+                                    newList = res + [ansNew]
+                            else:
+                                newList = res
+                            res = newList
                     else:
+                        # when nothing in RHS, go circular
+                        # - and take follow of LHS
+                        # only if (NT in LHS)!=curNT
                         if nt != curNT:
-                            solset.update(follow(curNT, visited))
+                            res = follow(curNT)
 
-    # Memoize the result
-    follows[nt] = solset
-    # Remove nt from visited set
-    visited.remove(nt)
-
-    return solset
+                    # add follow result in set form
+                    if res is not None:
+                        if type(res) is list:
+                            for g in res:
+                                solset.add(g)
+                        else:
+                            solset.add(res)
+    return list(solset)
 def computeAllFirsts():
     global rules, nonterm_userdef, \
         term_userdef, diction, firsts
@@ -521,16 +534,29 @@ sample_input_string = None
 # sample_input_string="( id ) * id + id"
 
 # sample set 7 (left factoring & recursion present)
-rules =['stmt -> for_stmt',
-       'for_stmt -> T_For T_LP opt_expr T_Semicolan opt_expr T_Semicolan opt_expr T_RP block',
-       'opt_expr -> #',
-        'block -> #',
+rules =[ 'decl -> type var_list T_Semicolon',
+    'var_list -> var_decl var_list_tail',
+    'var_list_tail -> T_Comma var_decl var_list_tail | #',
+    'type -> T_Bool | T_Char | T_Int',
+    'var_decl -> T_Id init',
+    'init -> var_init | T_LB number T_RB array_init',
+    'var_init -> T_Assign value | #',
+    'array_init -> T_Assign array_init_tail | #',
+    'array_init_tail -> T_LC value_list T_RC | T_String',
+    'value_list -> value value_list_tail',
+    'value_list_tail -> T_Comma value value_list_tail | #',
+    'value -> bool | char | number',
+    'bool -> T_False | T_True',
+    'char -> T_Character | T_String',
+    'number -> T_Decimal | T_Hexadecimal'
         ]
 
 
-nonterm_userdef =['stmt' ,'for_stmt' ,'opt_expr' , 'block', 'expr' ,'assignment','condition' ]
-term_userdef =['T_For' ,'T_LP' ,'T_Semicolan' ,'T_RP' ,'T_ID' ,'T_Assign']
-sample_input_string ="for T_LP T_Semicolan T_Semicolan T_RP"
+nonterm_userdef =['decl', 'type', 'var_decl', 'init', 'var_init', 'array_init', 'value_list', 'value_list_tail', 'value', 'bool', 'char', 'number',
+                  'array_init_tail','var_list', 'var_list_tail']
+term_userdef =['T_Semicolon' ,'T_Bool' ,'T_Char' ,'T_Int' ,'T_Id' ,'T_LB', 'T_RB', 'T_Assign', 'T_LC', 'T_RC', 'T_Comma', 'T_False' , 'T_True',
+               'T_Decimal', 'T_Hexadecimal', 'T_Character', 'T_String']
+sample_input_string = 'T_Char T_Id T_LB T_Decimal T_RB T_Comma T_Id T_LB T_Decimal T_RB T_Assign T_String T_Semicolon'
 # sample set 8 (Multiple char symbols T & NT)
 # rules = ["S -> NP VP",
 #          "NP -> P | PN | D N",
