@@ -1,7 +1,25 @@
 
-# Author: Tanmay P. Bisen
+from prettytable import PrettyTable
 
-# LL(1) parser code in python
+def create_table(terminals, data):
+    if not data:
+        raise ValueError("The provided data array is empty")
+
+    # ایجاد یک جدول با ستون‌های خالی
+    table = PrettyTable()
+
+    # تنظیم نام ستون‌ها بر اساس طول اولین سطر
+    num_columns = len(data[0])
+    columns = terminals
+    table.field_names = columns
+
+    # پر کردن جدول با داده‌های آرایه
+    for row in data:
+        if len(row) != num_columns:
+            raise ValueError("All rows in the data array must have the same number of elements")
+        table.add_row(row)
+
+    return table
 
 def removeLeftRecursion(rulesDiction):
     # for rule: A->Aa|b
@@ -169,7 +187,7 @@ def follow(nt):
     global start_symbol, rules, nonterm_userdef, \
         term_userdef, diction, firsts, follows
     # for start symbol return $ (recursion base case)
-
+    res = None
     solset = set()
     if nt == start_symbol:
         # return '$'
@@ -388,14 +406,47 @@ def createParseTable():
     # final state of parse table
     print("\nGenerated parsing table:\n")
     frmt = "{:>12}" * len(terminals)
-    print(frmt.format(*terminals))
+    str_terminal = frmt.format(*terminals)
+    terminal_list: list = []
+    terminal_list.append('NonTerminals/Terminals')
+    i = 0
+    while (i != len(str_terminal) - 1):
+        while (str_terminal[i] == ' '):
+            i += 1
+        terminal = ''
+        a = str_terminal[i]
+        if (i != len(str_terminal) - 1):
+            if (str_terminal[i:i+2] == 'T_'):
+                terminal += 'T_'
+                i += 2
+                a = str_terminal[i]
+                while (str_terminal[i] != ' ' and str_terminal[i:i+2] != 'T_'):
+                    terminal += str_terminal[i]
+                    i += 1
+                terminal_list.append(terminal)
+        else:
+            terminal_list.append(str_terminal[i])
+
+
+    print(terminal_list)
 
     j = 0
+    data_dict = {}
+    rule_with_noneTerminal: list = []
     for y in mat:
+        rule_list: list = []
+        rule_list.append(ntlist[j])
         frmt1 = "{:>12}" * len(y)
-        print(f"{ntlist[j]} {frmt1.format(*y)}")
+        for i in y:
+            if (i == ''):
+                rule_list.append('---')
+            else:
+                rule_list.append(i)
+        rule_with_noneTerminal.append(rule_list)
+        print(f"{ntlist[j]} \t\t{frmt1.format(*y)} |")
+        print('--------------------------------------')
         j += 1
-
+    print(create_table(terminal_list, rule_with_noneTerminal))
     return (mat, grammar_is_LL, terminals)
 
 
@@ -534,10 +585,15 @@ sample_input_string = None
 # sample_input_string="( id ) * id + id"
 
 # sample set 7 (left factoring & recursion present)
-rules =[ 'decl -> type var_list T_Semicolon',
+rules =[ 'program -> stmt stmt_list_tail',
+    'stmt_list_tail -> stmt stmt_list_tail| #',
+    'stmt -> if_stmt | decl | func_stmt | for_stmt | return_stmt | expr_stmt | assign_stmt',
+    'expr_stmt -> expr T_Semicolon',
+    'return_stmt -> T_Return expr T_Semicolon',
+    'decl -> type var_list T_Semicolon',
     'var_list -> var_decl var_list_tail',
     'var_list_tail -> T_Comma var_decl var_list_tail | #',
-    'type -> T_Bool | T_Char | T_Int',
+    'type -> T_Bool | T_Char | T_Int | T_Void',
     'var_decl -> T_Id init',
     'init -> var_init | T_LB number T_RB array_init',
     'var_init -> T_Assign value | #',
@@ -548,14 +604,92 @@ rules =[ 'decl -> type var_list T_Semicolon',
     'value -> bool | char | number',
     'bool -> T_False | T_True',
     'char -> T_Character | T_String',
-    'number -> T_Decimal | T_Hexadecimal'
+    'number -> T_Decimal | T_Hexadecimal',
+    'if_stmt -> T_If T_LP condition T_RP matched opt_tail',
+    'matched -> T_If T_LP condition T_RP matched T_Else matched | block | #',
+    'opt_tail -> T_Else tail | #',
+    'tail -> T_If T_LP condition T_RP block tail | block',
+    'block -> T_LC stmt_list_tail T_RC ',
+    'condition -> T_Id term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_Decimal term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_Hexadecimal term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_LOp_NOT factor term_tail_tail expr_tail_tail relop expr condition_tail_tail |  T_LP expr T_RP term_tail_tail expr_tail_tail relop expr condition_tail_tail ',
+    'condition_tail -> T_LOp_AND condition condition_tail | T_LOp_OR condition condition_tail ',
+    'relop -> T_ROp_LE | T_ROp_GE | T_ROp_NE | T_ROp_E | T_LOp_AND | T_LOp_OR',
+    'expr_tail_tail -> expr_tail expr_tail_tail | #',
+    'term_tail_tail -> term_tail term_tail_tail | #',
+    'condition_tail_tail -> condition_tail condition_tail_tail | #',
+    'expr -> term expr_tail_tail',
+    'expr_tail -> T_AOp_PL term expr_tail | T_AOp_MN term expr_tail ',
+    'term -> factor term_tail_tail',
+    'term_tail -> T_AOp_DV factor term_tail | T_AOp_RM factor term_tail | T_AOp_ML factor term_tail ',
+    'factor -> T_Id isarray | T_Decimal | T_Hexadecimal | T_LP expr T_RP | T_LOp_NOT factor',
+    'assign_stmt -> T_Id T_Assign expr T_Semicolon',
+    'isarray -> T_LB index T_RB | #',
+    'index -> T_Hexadecimal | T_Decimal | T_Id',
+    'for_stmt -> T_For T_LP expr T_Semicolon condition T_Semicolon expr T_RP block',
+    'func_stmt -> type T_Id T_LP parameter_list T_RP func_body',
+    'parameter_list -> parameter parameter_list_tail | #',
+    'parameter_list_tail -> T_Comma parameter parameter_list_tail | #',
+    'parameter -> type T_Id',
+    'func_body -> block | T_Semicolon',
+    'print_stmt -> T_Print T_LP formatstr argprintopt T_RP T_Semicolon',
+    'formatstr -> T_String',
+    'argprintopt -> arg argprintopt | #',
+    'arg -> T_Comma valid_print',
+    'valid_print -> T_Id | expr | T_Decimal | T_Hexadecimal'
         ]
 
+nonterm_userdef = ['program',
+                    'stmt_list_tail',
+                    'stmt',
+                    'expr_stmt',
+                   'return_stmt',
+                    'decl',
+                   'type',
+                   'var_decl',
+                   'init',
+                   'var_init',
+                   'array_init',
+                   'value_list',
+                   'value_list_tail',
+                   'value',
+                   'bool',
+                   'char',
+                   'number',
+                    'array_init_tail',
+                   'var_list',
+                   'var_list_tail',
+                   'relop',
+                     'if_stmt','matched','opt_tail','tail','condition','block','condition_tail','expr','condition_tail_tail','term_tail_tail','expr_tail_tail','expr_tail','term',
+                    'term_tail','factor','assign_stmt','isarray','index','for_stmt','func_stmt','parameter_list',
+                    'parameter_list_tail','parameter','func_body','print_stmt','formatstr','argprintopt','arg','valid_print'
 
-nonterm_userdef =['decl', 'type', 'var_decl', 'init', 'var_init', 'array_init', 'value_list', 'value_list_tail', 'value', 'bool', 'char', 'number',
-                  'array_init_tail','var_list', 'var_list_tail']
-term_userdef =['T_Semicolon' ,'T_Bool' ,'T_Char' ,'T_Int' ,'T_Id' ,'T_LB', 'T_RB', 'T_Assign', 'T_LC', 'T_RC', 'T_Comma', 'T_False' , 'T_True',
-               'T_Decimal', 'T_Hexadecimal', 'T_Character', 'T_String']
+
+                  ]
+
+term_userdef =['T_LP' ,'T_RP' ,'T_LC' ,'T_RC' ,'T_LB' ,'T_RB',
+               'T_Bool',
+               'T_Break',
+               'T_Char',
+               'T_Continue',
+               'T_Else',
+               'T_False',
+               'T_For',
+               'T_If',
+               'T_Int',
+               'T_Print',
+               'T_Return',
+               'T_True',
+               'T_Void',
+               'T_Semicolon',
+               'T_Comma',
+               'T_AOp_PL',
+               'T_AOp_MN',
+               'T_AOp_ML',
+               'T_AOp_DV',
+               'T_AOp_RM','T_Assign','T_ROp_L','T_ROp_G','T_LOp_NOT','T_ROp_LE',
+               'T_ROp_GE','T_ROp_NE','T_ROp_E','T_LOp_AND','T_LOp_OR','T_Id','T_Decimal','T_Hexadecimal','T_String','T_Character'
+               ]
+
+
 sample_input_string = 'T_Char T_Id T_LB T_Decimal T_RB T_Comma T_Id T_LB T_Decimal T_RB T_Assign T_String T_Semicolon'
 # sample set 8 (Multiple char symbols T & NT)
 # rules = ["S -> NP VP",
