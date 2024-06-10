@@ -197,9 +197,9 @@ def follow(nt):
     # solset - is result of computed 'follow' so far
 
     # For input, check in all rules
-    if (nt == 'condition' or nt == 'condition_tail' or nt == 'condition_tail_tail'):
-        condition_follow:list = ['T_RP', 'T_Semicolon']
-        return condition_follow
+    # if (nt == 'condition' or nt == 'condition_tail' or nt == 'condition_tail_tail'):
+    #     condition_follow:list = ['T_RP', 'T_Semicolon']
+    #     return condition_follow
     for curNT in diction:
         rhs = diction[curNT]
         # go for all productions of NT
@@ -327,7 +327,6 @@ def createParseTable():
     import copy
     global diction, firsts, follows, term_userdef
     print("\nFirsts and Follow Result table\n")
-
     # find space size
     mx_len_first = 0
     mx_len_fol = 0
@@ -370,6 +369,7 @@ def createParseTable():
     # rules implementation
     for lhs in diction:
         rhs = diction[lhs]
+        res: list = []
         for y in rhs:
             res = first(y)
             # epsilon is present,
@@ -593,7 +593,7 @@ sample_input_string = None
 # sample set 7 (left factoring & recursion present)
 rules =[ 'program -> stmt stmt_list_tail',
     'stmt_list_tail -> stmt stmt_list_tail| #',
-    'stmt -> if_stmt | decl_or_func | for_stmt | return_stmt | expr_stmt ',
+    'stmt -> if_stmt | decl_or_func | for_stmt | return_stmt | expr_stmt | print_stmt | break_stmt | continue_stmt',
     'decl_or_func -> type T_Id decl_or_func_tail',
     'decl_or_func_tail -> init var_list_tail T_Semicolon | T_LP parameter_list T_RP func_body',
     'expr_stmt -> expr T_Semicolon',
@@ -617,9 +617,15 @@ rules =[ 'program -> stmt stmt_list_tail',
     'opt_tail -> T_Else tail | #',
     'tail -> T_If T_LP condition T_RP block tail | block',
     'block -> T_LC stmt_list_tail T_RC ',
-    'condition -> T_Id term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_Decimal term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_Hexadecimal term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_LOp_NOT factor term_tail_tail expr_tail_tail relop expr condition_tail_tail |  T_LP expr T_RP term_tail_tail expr_tail_tail relop expr condition_tail_tail',
-    'condition_tail -> T_LOp_AND condition | T_LOp_OR condition',
-    'condition_tail_tail -> condition_tail condition_tail_tail | #',
+    'condition -> or_condition',
+    'or_condition -> and_condition or_condition_tail',
+    'or_condition_tail -> T_LOp_OR and_condition or_condition_tail | #',
+    'and_condition -> not_condition and_condition_tail',
+    'and_condition_tail -> T_LOp_AND not_condition and_condition_tail | #',
+    'not_condition -> T_LOp_NOT T_Id | expr relop expr',
+
+    'break_stmt -> T_Break T_Semicolon',
+    'continue_stmt -> T_Continue T_Semicolon',
     'relop -> T_ROp_LE | T_ROp_GE | T_ROp_NE | T_ROp_E | T_ROp_L | T_LOp_AND | T_LOp_OR',
     'expr_tail_tail -> expr_tail expr_tail_tail | #',
     'term_tail_tail -> term_tail term_tail_tail | #',
@@ -627,10 +633,11 @@ rules =[ 'program -> stmt stmt_list_tail',
     'expr_tail -> T_AOp_PL term  | T_AOp_MN term  | T_Assign term ',
     'term -> factor term_tail_tail',
     'term_tail -> T_AOp_DV factor  | T_AOp_RM factor  | T_AOp_ML factor ',
-    'factor -> T_Id isarray | T_Decimal | T_Hexadecimal | T_LP expr T_RP | T_LOp_NOT factor',
+    'factor -> T_Id isarray | T_Decimal | T_Hexadecimal | T_LP expr T_RP',
     'isarray -> T_LB index T_RB | #',
     'index -> T_Hexadecimal | T_Decimal | T_Id',
-    'for_stmt -> T_For T_LP expr T_Semicolon condition T_Semicolon expr T_RP block',
+    'for_stmt -> T_For T_LP for_tail',
+    'for_tail -> expr T_Semicolon condition T_Semicolon expr T_RP block | decl T_Semicolon condition T_Semicolon expr T_RP block',
     'func_stmt -> type T_Id T_LP parameter_list T_RP func_body',
     'parameter_list -> parameter parameter_list_tail | #',
     'parameter_list_tail -> T_Comma parameter parameter_list_tail | #',
@@ -666,8 +673,15 @@ nonterm_userdef = ['program',
                    'relop',
                    'decl_or_func',
                    'decl_or_func_tail',
-                   'condition_tail_tail',
-                   'if_stmt','matched','opt_tail','tail','condition','block','condition_tail','expr','term_tail_tail','expr_tail_tail','expr_tail','term',
+                   'break_stmt',
+                   'continue_stmt',
+                   'for_tail',
+                   'or_condition',
+                   'or_condition_tail',
+                   'and_condition',
+                   'and_condition_tail',
+                   'not_condition',
+                   'if_stmt','matched','opt_tail','tail','condition','block','expr','term_tail_tail','expr_tail_tail','expr_tail','term',
                    'term_tail','factor','isarray','index','for_stmt','func_stmt','parameter_list',
                    'parameter_list_tail','parameter','func_body','print_stmt','formatstr','argprintopt','arg','valid_print'
 
@@ -699,10 +713,35 @@ term_userdef =['T_LP' ,'T_RP' ,'T_LC' ,'T_RC' ,'T_LB' ,'T_RB',
                ]
 
 
-sample_input_string = ('T_If T_LP T_Id T_ROp_GE T_Decimal T_LOp_OR T_Id T_ROp_L T_Id T_LOp_AND T_LOp_NOT T_Id T_RP T_LC'
+sample_input_string = (' T_For T_LP T_Int T_Id T_Assign T_Decimal T_Semicolon T_Id T_ROp_L T_Decimal T_Semicolon T_Id T_Assign T_Id T_AOp_PL T_Decimal T_RP T_LC '
+                       'T_If T_LP T_Id T_AOp_RM T_Decimal T_ROp_E T_Decimal T_RP T_LC '
+                       'T_Id T_Assign T_Id T_Semicolon '
+                       'T_RC '
+                       'T_Id T_Assign T_Id  T_AOp_PL T_Id T_Semicolon '
+                       'T_RC')
+
+
+
+
+function_test = ('T_Int T_Id T_LP T_Int T_Id T_Comma T_Bool T_Id T_Comma T_Char T_Id T_RP T_LC '
+                       'T_Int T_Id T_Semicolon '
+                       'T_If T_LP T_Id T_LOp_AND T_Id, T_ROp_E T_Character T_RP T_LC '
+                       'T_Id T_Assign T_Id T_AOp_ML T_Decimal T_Semicolon '
+                       'T_RC T_Else T_LC '
+                       'T_Id T_Assign T_Id T_AOp_ML T_Decimal T_Semicolon '
+                       'T_RC'
+                       'T_Return T_Id T_Semicolon '
+                       'T_RC')
+
+for_test = (' T_For T_LP T_Id T_Assign T_Decimal T_Semicolon T_Id T_ROp_L T_Decimal T_Semicolon T_Id T_Assign T_Id T_AOp_PL T_Decimal T_RP T_LC '
+                       'T_If T_LP T_Id T_AOp_RM T_Decimal T_ROp_E T_Decimal T_RP T_LC '
+                       'T_Id T_Assign T_Id T_Semicolon '
+                       'T_RC '
+                       'T_Id T_Assign T_Id  T_AOp_PL T_Id T_Semicolon '
+                       'T_RC') # Continue, Break and variable declaration
+
+b = ('T_If T_LP T_Id T_ROp_GE T_Decimal T_LOp_OR T_Id T_ROp_L T_Id T_LOp_AND T_LOp_NOT T_Id T_RP T_LC'
                        'T_Id T_Assign T_True T_Semicolon T_RC')
-
-
 
 a = ('T_If T_LP T_Id T_ROp_E T_Decimal T_RP T_LC '
                        'T_Id T_Assign T_Decimal T_Semicolon '
