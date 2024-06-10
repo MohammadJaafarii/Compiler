@@ -197,7 +197,7 @@ def follow(nt):
     # solset - is result of computed 'follow' so far
 
     # For input, check in all rules
-    if (nt == 'condition' or nt == 'condition_tail'):
+    if (nt == 'condition' or nt == 'condition_tail' or nt == 'condition_tail_tail'):
         condition_follow:list = ['T_RP', 'T_Semicolon']
         return condition_follow
     for curNT in diction:
@@ -480,7 +480,6 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
 
     print("{:>20} {:>20} {:>20}".
           format("Buffer", "Stack" ,"Action"))
-
     while True:
         # end loop if all symbols matched
         if stack == ['$'] and buffer == ['$']:
@@ -596,7 +595,7 @@ rules =[ 'program -> stmt stmt_list_tail',
     'stmt_list_tail -> stmt stmt_list_tail| #',
     'stmt -> if_stmt | decl_or_func | for_stmt | return_stmt | expr_stmt ',
     'decl_or_func -> type T_Id decl_or_func_tail',
-    'decl_or_func_tail -> var_list_tail T_Semicolon | T_LP parameter_list T_RP func_body',
+    'decl_or_func_tail -> init var_list_tail T_Semicolon | T_LP parameter_list T_RP func_body',
     'expr_stmt -> expr T_Semicolon',
     'return_stmt -> T_Return expr T_Semicolon',
     'decl -> type var_list T_Semicolon',
@@ -618,9 +617,10 @@ rules =[ 'program -> stmt stmt_list_tail',
     'opt_tail -> T_Else tail | #',
     'tail -> T_If T_LP condition T_RP block tail | block',
     'block -> T_LC stmt_list_tail T_RC ',
-    'condition -> T_Id term_tail_tail expr_tail_tail relop expr condition_tail | T_Decimal term_tail_tail expr_tail_tail relop expr condition_tail | T_Hexadecimal term_tail_tail expr_tail_tail relop expr condition_tail | T_LOp_NOT factor term_tail_tail expr_tail_tail relop expr condition_tail |  T_LP expr T_RP term_tail_tail expr_tail_tail relop expr condition_tail',
-    'condition_tail -> T_LOp_AND condition | T_LOp_OR condition | #',
-    'relop -> T_ROp_LE | T_ROp_GE | T_ROp_NE | T_ROp_E | T_LOp_AND | T_LOp_OR',
+    'condition -> T_Id term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_Decimal term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_Hexadecimal term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_LOp_NOT factor term_tail_tail expr_tail_tail relop expr condition_tail_tail |  T_LP expr T_RP term_tail_tail expr_tail_tail relop expr condition_tail_tail',
+    'condition_tail -> T_LOp_AND condition | T_LOp_OR condition',
+    'condition_tail_tail -> condition_tail condition_tail_tail | #',
+    'relop -> T_ROp_LE | T_ROp_GE | T_ROp_NE | T_ROp_E | T_ROp_L | T_LOp_AND | T_LOp_OR',
     'expr_tail_tail -> expr_tail expr_tail_tail | #',
     'term_tail_tail -> term_tail term_tail_tail | #',
     'expr -> term expr_tail_tail',
@@ -666,9 +666,10 @@ nonterm_userdef = ['program',
                    'relop',
                    'decl_or_func',
                    'decl_or_func_tail',
-                     'if_stmt','matched','opt_tail','tail','condition','block','condition_tail','expr','term_tail_tail','expr_tail_tail','expr_tail','term',
-                    'term_tail','factor','isarray','index','for_stmt','func_stmt','parameter_list',
-                    'parameter_list_tail','parameter','func_body','print_stmt','formatstr','argprintopt','arg','valid_print'
+                   'condition_tail_tail',
+                   'if_stmt','matched','opt_tail','tail','condition','block','condition_tail','expr','term_tail_tail','expr_tail_tail','expr_tail','term',
+                   'term_tail','factor','isarray','index','for_stmt','func_stmt','parameter_list',
+                   'parameter_list_tail','parameter','func_body','print_stmt','formatstr','argprintopt','arg','valid_print'
 
 
                   ]
@@ -698,7 +699,15 @@ term_userdef =['T_LP' ,'T_RP' ,'T_LC' ,'T_RC' ,'T_LB' ,'T_RB',
                ]
 
 
-sample_input_string = 'T_Char T_Id T_LB T_Decimal T_RB T_Comma T_Id T_LB T_Decimal T_RB T_Assign T_String T_Semicolon'
+sample_input_string = ('T_If T_LP T_Id T_ROp_GE T_Decimal T_LOp_OR T_Id T_ROp_L T_Id T_LOp_AND T_LOp_NOT T_Id T_RP T_LC'
+                       'T_Id T_Assign T_True T_Semicolon T_RC')
+
+
+
+a = ('T_If T_LP T_Id T_ROp_E T_Decimal T_RP T_LC '
+                       'T_Id T_Assign T_Decimal T_Semicolon '
+                       'T_Id T_Assign T_Decimal T_Semicolon '
+                       'T_RC')
 # sample set 8 (Multiple char symbols T & NT)
 # rules = ["S -> NP VP",
 #          "NP -> P | PN | D N",
