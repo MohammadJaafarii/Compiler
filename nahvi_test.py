@@ -441,7 +441,11 @@ def createParseTable():
             if (i == ''):
                 rule_list.append('---')
             else:
-                rule_list.append(i)
+                if ',' in i:
+                    rule_list.append(f"\033[91m{i}\033[0m")
+                else:
+                    rule_list.append(i)
+
         rule_with_noneTerminal.append(rule_list)
         print(f"{ntlist[j]} \t\t{frmt1.format(*y)} |")
         print('--------------------------------------')
