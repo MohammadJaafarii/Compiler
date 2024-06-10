@@ -197,6 +197,9 @@ def follow(nt):
     # solset - is result of computed 'follow' so far
 
     # For input, check in all rules
+    if (nt == 'condition' or nt == 'condition_tail'):
+        condition_follow:list = ['T_RP', 'T_Semicolon']
+        return condition_follow
     for curNT in diction:
         rhs = diction[curNT]
         # go for all productions of NT
@@ -218,6 +221,7 @@ def follow(nt):
                         if '#' in res:
                             newList = []
                             res.remove('#')
+                            print(curNT)
                             ansNew = follow(curNT)
                             if ansNew != None:
                                 if type(ansNew) is list:
@@ -232,6 +236,7 @@ def follow(nt):
                         # - and take follow of LHS
                         # only if (NT in LHS)!=curNT
                         if nt != curNT:
+                            print(curNT)
                             res = follow(curNT)
 
                     # add follow result in set form
@@ -427,11 +432,8 @@ def createParseTable():
         else:
             terminal_list.append(str_terminal[i])
 
-
-    print(terminal_list)
-
     j = 0
-    data_dict = {}
+    err_count = 0
     rule_with_noneTerminal: list = []
     for y in mat:
         rule_list: list = []
@@ -443,14 +445,15 @@ def createParseTable():
             else:
                 if ',' in i:
                     rule_list.append(f"\033[91m{i}\033[0m")
+                    err_count += 1
                 else:
                     rule_list.append(i)
 
         rule_with_noneTerminal.append(rule_list)
-        print(f"{ntlist[j]} \t\t{frmt1.format(*y)} |")
-        print('--------------------------------------')
+        # print(f"{ntlist[j]} \t\t{frmt1.format(*y)}")
         j += 1
     print(create_table(terminal_list, rule_with_noneTerminal))
+    print(f"Number of Error: {err_count}")
     return (mat, grammar_is_LL, terminals)
 
 
@@ -614,16 +617,15 @@ rules =[ 'program -> stmt stmt_list_tail',
     'opt_tail -> T_Else tail | #',
     'tail -> T_If T_LP condition T_RP block tail | block',
     'block -> T_LC stmt_list_tail T_RC ',
-    'condition -> T_Id term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_Decimal term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_Hexadecimal term_tail_tail expr_tail_tail relop expr condition_tail_tail | T_LOp_NOT factor term_tail_tail expr_tail_tail relop expr condition_tail_tail |  T_LP expr T_RP term_tail_tail expr_tail_tail relop expr condition_tail_tail ',
-    'condition_tail -> T_LOp_AND condition condition_tail | T_LOp_OR condition condition_tail ',
+    'condition -> T_Id term_tail_tail expr_tail_tail relop expr condition_tail | T_Decimal term_tail_tail expr_tail_tail relop expr condition_tail | T_Hexadecimal term_tail_tail expr_tail_tail relop expr condition_tail | T_LOp_NOT factor term_tail_tail expr_tail_tail relop expr condition_tail |  T_LP expr T_RP term_tail_tail expr_tail_tail relop expr condition_tail',
+    'condition_tail -> T_LOp_AND condition | T_LOp_OR condition | #',
     'relop -> T_ROp_LE | T_ROp_GE | T_ROp_NE | T_ROp_E | T_LOp_AND | T_LOp_OR',
     'expr_tail_tail -> expr_tail expr_tail_tail | #',
     'term_tail_tail -> term_tail term_tail_tail | #',
-    'condition_tail_tail -> condition_tail condition_tail_tail | #',
     'expr -> term expr_tail_tail',
-    'expr_tail -> T_AOp_PL term expr_tail | T_AOp_MN term expr_tail ',
+    'expr_tail -> T_AOp_PL term expr_tail | T_AOp_MN term expr_tail',
     'term -> factor term_tail_tail',
-    'term_tail -> T_AOp_DV factor term_tail | T_AOp_RM factor term_tail | T_AOp_ML factor term_tail ',
+    'term_tail -> T_AOp_DV factor term_tail | T_AOp_RM factor term_tail | T_AOp_ML factor term_tail',
     'factor -> T_Id isarray | T_Decimal | T_Hexadecimal | T_LP expr T_RP | T_LOp_NOT factor',
     'assign_stmt -> T_Id T_Assign expr T_Semicolon',
     'isarray -> T_LB index T_RB | #',
@@ -638,7 +640,7 @@ rules =[ 'program -> stmt stmt_list_tail',
     'formatstr -> T_String',
     'argprintopt -> arg argprintopt | #',
     'arg -> T_Comma valid_print',
-    'valid_print -> T_Id | expr | T_Decimal | T_Hexadecimal'
+    'valid_print -> expr'
         ]
 
 nonterm_userdef = ['program',
@@ -662,7 +664,7 @@ nonterm_userdef = ['program',
                    'var_list',
                    'var_list_tail',
                    'relop',
-                     'if_stmt','matched','opt_tail','tail','condition','block','condition_tail','expr','condition_tail_tail','term_tail_tail','expr_tail_tail','expr_tail','term',
+                     'if_stmt','matched','opt_tail','tail','condition','block','condition_tail','expr','term_tail_tail','expr_tail_tail','expr_tail','term',
                     'term_tail','factor','assign_stmt','isarray','index','for_stmt','func_stmt','parameter_list',
                     'parameter_list_tail','parameter','func_body','print_stmt','formatstr','argprintopt','arg','valid_print'
 
