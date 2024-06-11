@@ -212,6 +212,15 @@ def display_and_save():
             prettytable_list.append([f'{red_color}{symboleTable.entries[key]['location']}{reset_color}', f'{red_color}{symboleTable.entries[key]['name']}{reset_color}', f'{red_color}{symboleTable.entries[key]['type']}{reset_color}',
                                      f'{red_color}{symboleTable.entries[key]['line']}{reset_color}'])
     file.close()
+    file = open('SyntaxInput.txt', 'w')
+    for key in symboleTable.entries:
+        if not symboleTable.entries[key]['error'] and symboleTable.entries[key]['type'] not in ['T_Comment', 'T_Whitespace']:
+            str = f"{symboleTable.entries[key]['type']} "
+            file.write(str)
+
+    file.close()
+
+
     for row in prettytable_list:
         table.add_row(row)
     print(table)
