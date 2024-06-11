@@ -25,20 +25,18 @@ error_list: list = []
 
 
 
-def create_table(parser_table):
+def create_table(header: list , pretty_table: list):
 
-
+    global nonterm_userdef
     # ایجاد یک جدول با ستون‌های خالی
     table = PrettyTable()
-
     # تنظیم نام ستون‌ها بر اساس طول اولین سطر
-    # num_columns = len(data[0])
-    # columns = terminals
-    # table.field_names = columns
-
+    num_columns = len(header)
+    columns = header
+    table.field_names = columns
     # پر کردن جدول با داده‌های آرایه
-    for row in parser_table:
-        if len(row) != len(row):
+    for row in pretty_table:
+        if len(row) != len(header):
             raise ValueError("All rows in the data array must have the same number of elements")
         table.add_row(row)
 
@@ -430,6 +428,7 @@ def createParseTable():
                         grammar_is_LL = False
                         mat[xnt][yt] = mat[xnt][yt] \
                                        + f",{lhs}->{' '.join(y)}"
+    mat = define_sync(mat)
 
     # final state of parse table
     print("\nGenerated parsing table:\n")
@@ -475,10 +474,9 @@ def createParseTable():
         rule_with_noneTerminal.append(rule_list)
         # print(f"{ntlist[j]} \t\t{frmt1.format(*y)}")
         j += 1
-    # print(create_table(terminal_list, rule_with_noneTerminal))
+    print(create_table(terminal_list, rule_with_noneTerminal))
     print(f"Number of Error: {err_count}")
-    mat = define_sync(mat)
-    print(create_table(mat))
+    # print(show_parse_table(terminals, mat))
     return (mat, grammar_is_LL, terminals)
 
 def define_sync(parser_table):

@@ -36,7 +36,7 @@ def id_identifier(line: str, iterator: int):
     if not (is_alpha(line[iterator]) or line[iterator] == '_'): # Valid char for starting ID
         return None
 
-    while iterator < len(line) and (is_alpha(line[iterator]) or is_alpha(line[iterator]) or line[iterator] == '_'):
+    while iterator < len(line) and (is_alpha(line[iterator]) or is_digit(line[iterator]) or line[iterator] == '_'):
         token += line[iterator]
         iterator += 1
 
