@@ -24,8 +24,21 @@ from prettytable import PrettyTable
 error_list: list = []
 
 
-
-def create_table(header: list , pretty_table: list):
+# def create_pretty_table(header: list , pretty_table: list):
+#
+#     global nonterm_userdef
+#     # ایجاد یک جدول با ستون‌های خالی
+#     table = PrettyTable()
+#     # تنظیم نام ستون‌ها بر اساس طول اولین سطر
+#     num_columns = len(header)
+#     columns = header
+#     table.field_names = columns
+#     # پر کردن جدول با داده‌های آرایه
+#     for row in pretty_table:
+#         table.add_row([row])
+#
+#     return table
+def create_pretty_table(header: list , pretty_table: list, align = None):
 
     global nonterm_userdef
     # ایجاد یک جدول با ستون‌های خالی
@@ -35,8 +48,11 @@ def create_table(header: list , pretty_table: list):
     columns = header
     table.field_names = columns
     # پر کردن جدول با داده‌های آرایه
+    if align is not None:
+        table.align = align
+
     for row in pretty_table:
-        if len(row) != len(header):
+        if len(row) != num_columns:
             raise ValueError("All rows in the data array must have the same number of elements")
         table.add_row(row)
 
@@ -283,19 +299,34 @@ def computeAllFirsts():
             multirhs[i] = multirhs[i].split()
         diction[k[0]] = multirhs
 
-    print(f"\nRules: \n")
+    header = ['Rules']
+    rule_list:list = []
     for y in diction:
-        print(f"{y}->{diction[y]}")
-    print(f"\nAfter elimination of left recursion:\n")
+        rule_list.append([f"{y}->{diction[y]}"])
+    print(create_pretty_table(header, rule_list))
+    print('\n\n')
+
 
     diction = removeLeftRecursion(diction)
+    header = ['After elimination of left recursion']
+    left_recs_list: list = []
     for y in diction:
-        print(f"{y}->{diction[y]}")
-    print("\nAfter left factoring:\n")
+        left_recs_list.append([f"{y}->{diction[y]}"])
+
+    print(create_pretty_table(header, left_recs_list))
+    print('\n\n')
+
+
 
     diction = LeftFactoring(diction)
+    header = ['After left factoring']
+    left_fct_list: list = []
     for y in diction:
-        print(f"{y}->{diction[y]}")
+        left_fct_list.append([f"{y}->{diction[y]}"])
+
+    print(create_pretty_table(header, left_fct_list))
+    print('\n\n')
+
 
     # calculate first for each rule
     # - (call first() on all RHS)
@@ -313,13 +344,17 @@ def computeAllFirsts():
         # save result in 'firsts' list
         firsts[y] = t
 
-    print("\nCalculated firsts: ")
-    key_list = list(firsts.keys())
-    index = 0
-    for gg in firsts:
-        print(f"first({key_list[index]}) "
-              f"=> {firsts.get(gg)}")
-        index += 1
+    # header = ['Non Terminal', 'Firsts']
+    # first_list: list = []
+    # key_list = list(firsts.keys())
+    # index = 0
+    # for gg in firsts:
+    #     total_list = [f"{key_list[index]}",f"{firsts.get(gg)}"]
+    #     first_list.append(total_list)
+    #     index += 1
+    #
+    # print(create_pretty_table(header, first_list))
+    # print('\n\n')
 
 
 def computeAllFollows():
@@ -332,20 +367,25 @@ def computeAllFollows():
             for g in sol:
                 solset.add(g)
         follows[NT] = solset
-
-    print("\nCalculated follows: ")
-    key_list = list(follows.keys())
-    index = 0
-    for gg in follows:
-        print(f"follow({key_list[index]})"
-              f" => {follows[gg]}")
-        index += 1
-
+    # header = ['Non Terminal', 'Follows']
+    # follow_list: list = []
+    # key_list = list(follows.keys())
+    # index = 0
+    # for gg in follows:
+    #     total = [f'{key_list[index]}',f'{follows[gg]}']
+    #     follow_list.append(total)
+    #     index += 1
+    #
+    # print(create_pretty_table(header, follow_list))
+    # print('\n\n')
 
 # create parse table
 def createParseTable():
     global diction, firsts, follows, term_userdef
-    print("\nFirsts and Follow Result table\n")
+    print('----------------------------------')
+    print("  Firsts and Follow Result table")
+    print('----------------------------------')
+    print('\n\n')
     # find space size
     mx_len_first = 0
     mx_len_fol = 0
@@ -356,16 +396,13 @@ def createParseTable():
             mx_len_first = k1
         if k2 > mx_len_fol:
             mx_len_fol = k2
-
-    print(f"{{:<{10}}} "
-          f"{{:<{mx_len_first + 5}}} "
-          f"{{:<{mx_len_fol + 5}}}"
-          .format("Non-T", "FIRST", "FOLLOW"))
+    header = ['Non Terminal', 'First', 'Follow']
+    result_list: list = []
     for u in diction:
-        print(f"{{:<{10}}} "
-              f"{{:<{mx_len_first + 5}}} "
-              f"{{:<{mx_len_fol + 5}}}"
-              .format(u, str(firsts[u]), str(follows[u])))
+        total = [f'{u}', f'{firsts[u]}', f'{follows[u]}']
+        result_list.append(total)
+    print(create_pretty_table(header, result_list))
+    print('\n\n')
 
     # create matrix of row(NT) x [col(T) + 1($)]
     # create list of non-terminals
@@ -431,7 +468,11 @@ def createParseTable():
     mat = define_sync(mat)
 
     # final state of parse table
-    print("\nGenerated parsing table:\n")
+    print('----------------------------------')
+    print("     Generated parsing table")
+    print('----------------------------------')
+    print('\n\n')
+
     frmt = "{:>12}" * len(terminals)
     str_terminal = frmt.format(*terminals)
     terminal_list: list = []
@@ -474,8 +515,10 @@ def createParseTable():
         rule_with_noneTerminal.append(rule_list)
         # print(f"{ntlist[j]} \t\t{frmt1.format(*y)}")
         j += 1
-    print(create_table(terminal_list, rule_with_noneTerminal))
-    print(f"Number of Error: {err_count}")
+    print(create_pretty_table(terminal_list, rule_with_noneTerminal))
+    if err_count != 0:
+        print(f"\033[91mNumber of Error: {err_count}\033[91m")
+
     # print(show_parse_table(terminals, mat))
     return (mat, grammar_is_LL, terminals)
 
@@ -514,7 +557,13 @@ def expected_items(stack):
 def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, input_string, term_userdef ,start_symbol):
     global root
 
-    print(f"\nValidate String => {input_string}\n")
+    print('\n\n')
+    for i in range(0, len(input_string)+ 20):
+        print('-', end='')
+    print(f"\nValidate String => {input_string}")
+    for i in range(0, len(input_string) + 20):
+        print('-', end='')
+    print('\n\n')
 
     # for more than one entries
     # - in one cell of parsing table
@@ -533,9 +582,10 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
     input_string.reverse()
     buffer = ['$'] + input_string
 
-    print("{:>20} {:>20} {:>20}".
-          format("Buffer", "Stack" ,"Action"))
 
+    header = ["Buffer", "Stack" ,"Action"]
+    valid_string_list: list = []
+    total:list = []
     stack_node = [root]
     top_node = root
     while True:
@@ -550,17 +600,21 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
                 buffer = buffer[:-1]
         if stack == ['$'] and buffer == ['$']:
             if len(error_list) == 0 :
-                print("{:>20} {:>20} {:>20}"
-                      .format(' '.join(buffer),
-                              ' '.join(stack),
-                              "\033[92mValid\033[0m"))
-                return "\n\033[92mValid String!\033[0m"
+                total = [f'{buffer}',f'{stack}', f'Valid']
+                valid_string_list.append(total)
+                # print("{:>20} {:>20} {:>20}"
+                #       .format(' '.join(buffer),
+                #               ' '.join(stack),
+                #               "\033[92mValid\033[0m"))
+                return "\n\033[92mValid String!\033[0m", valid_string_list, header
             else:
-                print("{:>20} {:>20} {:>20}"
-                      .format(' '.join(buffer),
-                              ' '.join(stack),
-                              "\033[91mInValid\033[91m"))
-                return '\n\033[91mInvalid String!\033[91m'
+                total = [f'{buffer}', f'{stack}', f'InValid']
+                valid_string_list.append(total)
+                # print("{:>20} {:>20} {:>20}"
+                #       .format(' '.join(buffer),
+                #               ' '.join(stack),
+                #               "\033[91mInValid\033[91m"))
+                return '\n\033[91mInvalid String!\033[91m', valid_string_list, header
         elif stack[0] not in term_userdef:
 
             # take font of buffer (y) and tos (x)
@@ -569,10 +623,11 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
             if parsing_table[x][y] != '' and parsing_table[x][y] != "Sync":
                 # format table entry received
                 entry = parsing_table[x][y]
-                print("{:>20} {:>20} {:>25}".
-                      format(' '.join(buffer),
-                             ' '.join(stack),
-                             f"T[{stack[0]}][{buffer[-1]}] = {entry}"))
+                total = [f'{buffer}',f'{stack}', f'T[{stack[0]}][{buffer[-1]}] = {entry}']
+                # print("{:>20} {:>20} {:>25}".
+                #       format(' '.join(buffer),
+                #              ' '.join(stack),
+                #              f"T[{stack[0]}][{buffer[-1]}] = {entry}"))
                 lhs_rhs = entry.split("->")
                 lhs_rhs[1] = lhs_rhs[1].replace('#', '').strip()
                 entryrhs = lhs_rhs[1].split()
@@ -610,10 +665,12 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
         else:
             # stack top is Terminal
             if stack[0] == buffer[-1]:
-                print("{:>20} {:>20} {:>20}"
-                      .format(' '.join(buffer),
-                              ' '.join(stack),
-                              f"Matched:{stack[0]}"))
+                total = [f'{buffer}',f'{stack}', f'Matched:{stack[0]}']
+                valid_string_list.append(total)
+                # print("{:>20} {:>20} {:>20}"
+                #       .format(' '.join(buffer),
+                #               ' '.join(stack),
+                #               f"Matched:{stack[0]}"))
                 buffer = buffer[:-1]
                 stack = stack[1:]
             else:
@@ -820,8 +877,16 @@ term_userdef =['T_LP' ,'T_RP' ,'T_LC' ,'T_RC' ,'T_LB' ,'T_RB',
 
 
 file = open('SyntaxInput.txt', 'rt')
-
-sample_input_string = file.read()
+file.read()
+sample_input_string = ('T_Int T_Id T_LP T_Int T_Id T_Comma T_Bool T_Id T_Comma T_Char T_Id T_RP T_LC '
+                       'T_Int T_Id T_Semicolon '
+                       'T_If T_LP T_Id T_LOp_AND T_Id T_ROp_E T_Character T_RP T_LC '
+                       'T_Id T_Assign T_Id T_AOp_ML T_Decimal T_Semicolon '
+                       'T_RC T_Else T_LC '
+                       'T_Id T_Assign T_Id T_AOp_ML T_Decimal T_Semicolon '
+                       'T_RC '
+                       'T_Return T_Id T_Semicolon '
+                       'T_RC')
 file.close()
 
 
@@ -885,10 +950,15 @@ root = TreeNode(start_symbol)
 
 # validate string input using stack-buffer concept
 if sample_input_string != None:
-    validity = validateStringUsingStackBuffer(parsing_table, result,
+    validity, valid_string_list, header = validateStringUsingStackBuffer(parsing_table, result,
                                               tabTerm, sample_input_string,
                                               term_userdef ,start_symbol)
-    print(validity)
+    print(create_pretty_table(header, valid_string_list, 'l'))
+
+    print('\n\n')
+    print( validity)
+    print('\n\n')
+
     for err in error_list:
         print(err)
     print(root)
