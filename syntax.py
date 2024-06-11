@@ -1,5 +1,10 @@
+from nutree import Tree, Node
+from bigtree import Node, find
 
 from prettytable import PrettyTable
+error_list: list = []
+
+
 
 def create_table(terminals, data):
     if not data:
@@ -197,9 +202,10 @@ def follow(nt):
     # solset - is result of computed 'follow' so far
 
     # For input, check in all rules
-    # if (nt == 'condition' or nt == 'condition_tail' or nt == 'condition_tail_tail'):
-    #     condition_follow:list = ['T_RP', 'T_Semicolon']
-    #     return condition_follow
+    if (nt == 'opt_tail' or nt == 'opt_tail_tail'):
+        opt_follow:list = ['T_Int', '$', 'T_LP', 'T_Break', 'T_Id', 'T_Void',
+                            'T_Hexadecimal', 'T_Return', 'T_Print', 'T_For', 'T_Decimal', 'T_If', 'T_Continue', 'T_Bool', 'T_RC', 'T_Char']
+        return opt_follow
     for curNT in diction:
         rhs = diction[curNT]
         # go for all productions of NT
@@ -221,7 +227,6 @@ def follow(nt):
                         if '#' in res:
                             newList = []
                             res.remove('#')
-                            print(curNT)
                             ansNew = follow(curNT)
                             if ansNew != None:
                                 if type(ansNew) is list:
@@ -236,7 +241,6 @@ def follow(nt):
                         # - and take follow of LHS
                         # only if (NT in LHS)!=curNT
                         if nt != curNT:
-                            print(curNT)
                             res = follow(curNT)
 
                     # add follow result in set form
@@ -456,7 +460,17 @@ def createParseTable():
     print(f"Number of Error: {err_count}")
     return (mat, grammar_is_LL, terminals)
 
-
+def expected_items(stack):
+    first = firsts[stack]
+    expected = ''
+    for f in first:
+        if f != '#':
+            expected += f + " "
+        else:
+            follow = follows[stack]
+            for fol in follow:
+                expected += fol + " "
+    return expected
 def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, input_string, term_userdef ,start_symbol):
 
     print(f"\nValidate String => {input_string}\n")
@@ -480,14 +494,24 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
 
     print("{:>20} {:>20} {:>20}".
           format("Buffer", "Stack" ,"Action"))
+    root = Node(stack[0])
+    flag: bool = False
     while True:
         # end loop if all symbols matched
+
         if stack == ['$'] and buffer == ['$']:
-            print("{:>20} {:>20} {:>20}"
-                  .format(' '.join(buffer),
-                          ' '.join(stack),
-                          "Valid"))
-            return "\nValid String!"
+            if len(error_list) == 0 :
+                print("{:>20} {:>20} {:>20}"
+                      .format(' '.join(buffer),
+                              ' '.join(stack),
+                              "\033[92mValid\033[0m"))
+                return "\n\033[92mValid String!\033[0m"
+            else:
+                print("{:>20} {:>20} {:>20}"
+                      .format(' '.join(buffer),
+                              ' '.join(stack),
+                              "\033[91mInValid\033[91m"))
+                return '\n\033[91mInvalid String!\033[91m'
         elif stack[0] not in term_userdef:
             # take font of buffer (y) and tos (x)
             x = list(diction.keys()).index(stack[0])
@@ -502,10 +526,20 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
                 lhs_rhs = entry.split("->")
                 lhs_rhs[1] = lhs_rhs[1].replace('#', '').strip()
                 entryrhs = lhs_rhs[1].split()
+                # Create Tree
+                if flag:
+                    root = Node(stack[0])
+                    for ent in entryrhs:
+                        Node(ent, parent=root)
+
+                else:
+                    flag = True
                 stack = entryrhs + stack[1:]
             else:
-                return f"\nInvalid String! No rule at " \
-                       f"Table[{stack[0]}][{buffer[-1]}]."
+                # return f"\nInvalid String! No rule at " \
+                #        f"Table[{stack[0]}][{buffer[-1]}]."
+                error_list.append(f"\033[91m{buffer[-1]} is error \nExpectatio:\n{expected_items(stack[0])}\033[0m")
+                buffer = buffer[:-1]
         else:
             # stack top is Terminal
             if stack[0] == buffer[-1]:
@@ -516,8 +550,11 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
                 buffer = buffer[:-1]
                 stack = stack[1:]
             else:
-                return "\nInvalid String! " \
-                       "Unmatched terminal symbols"
+                # return "\nInvalid String! " \
+                #        "Unmatched terminal symbols"
+                error_list.append(f"\033[91m{buffer[-1]} is error \nExpectatio:\n{expected_items(stack[0])}\033[0m")
+                buffer = buffer[:-1]
+
 
 
 # DRIVER CODE - MAIN
@@ -614,30 +651,31 @@ rules =[ 'program -> stmt stmt_list_tail',
     'char -> T_Character | T_String',
     'number -> T_Decimal | T_Hexadecimal',
     'if_stmt -> T_If T_LP condition T_RP block opt_tail',
-    'opt_tail -> T_Else tail | #',
-    'tail -> T_If T_LP condition T_RP block tail | block',
+    'opt_tail -> T_Else opt_tail_tail | #',
+    'opt_tail_tail -> T_If T_LP condition T_RP block opt_tail | block opt_tail',
     'block -> T_LC stmt_list_tail T_RC ',
     'condition -> or_condition',
     'or_condition -> and_condition or_condition_tail',
     'or_condition_tail -> T_LOp_OR and_condition or_condition_tail | #',
     'and_condition -> not_condition and_condition_tail',
     'and_condition_tail -> T_LOp_AND not_condition and_condition_tail | #',
-    'not_condition -> T_LOp_NOT T_Id | expr relop expr',
+    'not_condition -> T_LOp_NOT T_Id | expr not_condition_tail',
+    'not_condition_tail -> relop expr | #',
 
     'break_stmt -> T_Break T_Semicolon',
     'continue_stmt -> T_Continue T_Semicolon',
-    'relop -> T_ROp_LE | T_ROp_GE | T_ROp_NE | T_ROp_E | T_ROp_L | T_LOp_AND | T_LOp_OR',
+    'relop -> T_ROp_LE | T_ROp_GE | T_ROp_NE | T_ROp_E | T_ROp_L',
     'expr_tail_tail -> expr_tail expr_tail_tail | #',
     'term_tail_tail -> term_tail term_tail_tail | #',
     'expr -> term expr_tail_tail',
     'expr_tail -> T_AOp_PL term  | T_AOp_MN term  | T_Assign term ',
     'term -> factor term_tail_tail',
     'term_tail -> T_AOp_DV factor  | T_AOp_RM factor  | T_AOp_ML factor ',
-    'factor -> T_Id isarray | T_Decimal | T_Hexadecimal | T_LP expr T_RP',
+    'factor -> T_Id isarray | T_Decimal | T_Hexadecimal | T_LP expr T_RP | T_False | T_True | T_Character',
     'isarray -> T_LB index T_RB | #',
     'index -> T_Hexadecimal | T_Decimal | T_Id',
     'for_stmt -> T_For T_LP for_tail',
-    'for_tail -> expr T_Semicolon condition T_Semicolon expr T_RP block | decl T_Semicolon condition T_Semicolon expr T_RP block',
+    'for_tail -> expr T_Semicolon condition T_Semicolon expr T_RP block | decl condition T_Semicolon expr T_RP block',
     'func_stmt -> type T_Id T_LP parameter_list T_RP func_body',
     'parameter_list -> parameter parameter_list_tail | #',
     'parameter_list_tail -> T_Comma parameter parameter_list_tail | #',
@@ -681,7 +719,9 @@ nonterm_userdef = ['program',
                    'and_condition',
                    'and_condition_tail',
                    'not_condition',
-                   'if_stmt','matched','opt_tail','tail','condition','block','expr','term_tail_tail','expr_tail_tail','expr_tail','term',
+                   'opt_tail_tail',
+                   'not_condition_tail',
+                   'if_stmt','matched','opt_tail','condition','block','expr','term_tail_tail','expr_tail_tail','expr_tail','term',
                    'term_tail','factor','isarray','index','for_stmt','func_stmt','parameter_list',
                    'parameter_list_tail','parameter','func_body','print_stmt','formatstr','argprintopt','arg','valid_print'
 
@@ -713,7 +753,7 @@ term_userdef =['T_LP' ,'T_RP' ,'T_LC' ,'T_RC' ,'T_LB' ,'T_RB',
                ]
 
 
-sample_input_string = (' T_For T_LP T_Int T_Id T_Assign T_Decimal T_Semicolon T_Id T_ROp_L T_Decimal T_Semicolon T_Id T_Assign T_Id T_AOp_PL T_Decimal T_RP T_LC '
+sample_input_string = (' T_For T_LP T_Id T_Assign T_Decimal T_Semicolon T_Id T_ROp_L T_Decimal T_Semicolon T_Id T_Assign T_Id T_AOp_PL T_Decimal T_RP T_LC '
                        'T_If T_LP T_Id T_AOp_RM T_Decimal T_ROp_E T_Decimal T_RP T_LC '
                        'T_Id T_Assign T_Id T_Semicolon '
                        'T_RC '
@@ -721,11 +761,9 @@ sample_input_string = (' T_For T_LP T_Int T_Id T_Assign T_Decimal T_Semicolon T_
                        'T_RC')
 
 
-
-
 function_test = ('T_Int T_Id T_LP T_Int T_Id T_Comma T_Bool T_Id T_Comma T_Char T_Id T_RP T_LC '
                        'T_Int T_Id T_Semicolon '
-                       'T_If T_LP T_Id T_LOp_AND T_Id, T_ROp_E T_Character T_RP T_LC '
+                       'T_If T_LP T_Id T_LOp_AND T_Id T_ROp_E T_Character T_RP T_LC '
                        'T_Id T_Assign T_Id T_AOp_ML T_Decimal T_Semicolon '
                        'T_RC T_Else T_LC '
                        'T_Id T_Assign T_Id T_AOp_ML T_Decimal T_Semicolon '
@@ -787,6 +825,8 @@ if sample_input_string != None:
                                               tabTerm, sample_input_string,
                                               term_userdef ,start_symbol)
     print(validity)
+    for err in error_list:
+        print(err)
 else:
     print("\nNo input String detected")
 
