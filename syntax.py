@@ -494,8 +494,8 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
 
     print("{:>20} {:>20} {:>20}".
           format("Buffer", "Stack" ,"Action"))
-    root = Node(stack[0])
-    flag: bool = False
+    # root = Node(stack[0])
+    # flag: bool = False
     while True:
         # end loop if all symbols matched
 
@@ -527,14 +527,14 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
                 lhs_rhs[1] = lhs_rhs[1].replace('#', '').strip()
                 entryrhs = lhs_rhs[1].split()
                 # Create Tree
-                if flag:
-                    root = Node(stack[0])
-                    for ent in entryrhs:
-                        Node(ent, parent=root)
-
-                else:
-                    flag = True
-                stack = entryrhs + stack[1:]
+                # if flag:
+                #     root = Node(stack[0])
+                #     for ent in entryrhs:
+                #         Node(ent, parent=root)
+                #
+                # else:
+                #     flag = True
+                # stack = entryrhs + stack[1:]
             else:
                 # return f"\nInvalid String! No rule at " \
                 #        f"Table[{stack[0]}][{buffer[-1]}]."
@@ -753,11 +753,9 @@ term_userdef =['T_LP' ,'T_RP' ,'T_LC' ,'T_RC' ,'T_LB' ,'T_RB',
                ]
 
 
-sample_input_string = (' T_For T_LP T_Id T_Assign T_Decimal T_Semicolon T_Id T_ROp_L T_Decimal T_Semicolon T_Id T_Assign T_Id T_AOp_PL T_Decimal T_RP T_LC '
-                       'T_If T_LP T_Id T_AOp_RM T_Decimal T_ROp_E T_Decimal T_RP T_LC '
-                       'T_Id T_Assign T_Id T_Semicolon '
-                       'T_RC '
-                       'T_Id T_Assign T_Id  T_AOp_PL T_Id T_Semicolon '
+sample_input_string = ('T_If T_LP T_Id T_ROp_E T_Decimal T_RP T_LC '
+                       'T_Id T_Assign T_Decimal T_Semicolon '
+                       'T_Id T_Assign T_Decimal T_Semicolon '
                        'T_RC')
 
 
