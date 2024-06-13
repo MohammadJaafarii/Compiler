@@ -3,6 +3,7 @@ from tkinter import filedialog
 from SymbolTable import SymbolTable, Token
 from prettytable import PrettyTable
 from element_lists import *
+from Syntax_Analyzer import starting_SyntaxAnalyzer
 line_lists:list = []
 invalid_tokens: Token = []
 start_index: int = 0
@@ -215,7 +216,7 @@ def display_and_save():
     file = open('SyntaxInput.txt', 'w')
     for key in symboleTable.entries:
         if not symboleTable.entries[key]['error'] and symboleTable.entries[key]['type'] not in ['T_Comment', 'T_Whitespace']:
-            str = f"{symboleTable.entries[key]['type']} "
+            str = f"{symboleTable.entries[key]['type']} {symboleTable.entries[key]['name']} {symboleTable.entries[key]['line']}\n"
             file.write(str)
 
     file.close()
@@ -283,3 +284,4 @@ if __name__ == '__main__':
     read_file()
     analyzer()
     display_and_save()
+    starting_SyntaxAnalyzer()

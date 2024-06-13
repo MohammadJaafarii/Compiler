@@ -1,7 +1,22 @@
-from nutree import Tree, Node
-from bigtree import Node, find
+from anytree import Node, RenderTree, PostOrderIter
+from element_lists import TERMINALS
 import copy
+input_string: list = []
+class Token:
+    def __init__(self, type, name, line):
+        self.type: str = type
+        self.name: str = name
+        self.line: int = int(line)
 
+def read_input(file_name):
+    global input_string
+    with open (file_name, 'r') as file:
+        for line in file:
+            line = line.strip()
+            line = line.split()
+
+            tk = Token(line[0], line[1], line[2])
+            input_string.append(tk)
 class TreeNode:
     def __init__(self, symbol, parent=None):
         self.symbol = symbol
@@ -516,11 +531,23 @@ def createParseTable():
         # print(f"{ntlist[j]} \t\t{frmt1.format(*y)}")
         j += 1
     print(create_pretty_table(terminal_list, rule_with_noneTerminal))
+    print('\n\n')
     if err_count != 0:
         print(f"\033[91mNumber of Error: {err_count}\033[91m")
 
     # print(show_parse_table(terminals, mat))
     return (mat, grammar_is_LL, terminals)
+
+
+def tree(root: TreeNode):
+    i = 0
+    for node in PostOrderIter(root):
+        if not node.children:
+            if node.name in nonterm_userdef:
+                epsilon_leaf = Node('ε', parent=node)
+
+
+    return root
 
 def define_sync(parser_table):
     ntlist = list(diction.keys())
@@ -554,22 +581,25 @@ def expected_items(stack):
     return expected_first+" "+expected_follow
 
 
-def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, input_string, term_userdef ,start_symbol):
-    global root
+def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, term_userdef ,start_symbol):
+    global root, input_string
 
-    print('\n\n')
-    for i in range(0, len(input_string)+ 20):
-        print('-', end='')
-    print(f"\nValidate String => {input_string}")
-    for i in range(0, len(input_string) + 20):
-        print('-', end='')
-    print('\n\n')
+    # print('\n\n')
+    # for i in range(0, len(input_string)+ 20):
+    #     print('-', end='')
+    # print(f"\nValidate String => {input_string}")
+    # for i in range(0, len(input_string) + 20):
+    #     print('-', end='')
+    # print('\n\n')
 
     # for more than one entries
     # - in one cell of parsing table
     if grammarll1 == False:
+        inpt_str = ''
+        for inpt in input_string:
+            inpt_str += f'{inpt} '
         return f"\nInput String = " \
-               f"\"{input_string}\"\n" \
+               f"\"{inpt_str}\"\n" \
                f"Grammar is not LL(1)"
 
     # implementing stack buffer
@@ -578,7 +608,7 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
     buffer = []
 
     # reverse input string store in buffer
-    input_string = input_string.split()
+    # input_string = input_string.split()
     input_string.reverse()
     buffer = ['$'] + input_string
 
@@ -594,9 +624,9 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
             stack_node = stack_node[1:]
 
         # end loop if all symbols matched
-        if stack == ['$'] and buffer !=["$"]:
-            while buffer != ["$"]:
-                error_list.append(f"\033[91mUnMatched Token {buffer[-1]}\033[0m")
+        if stack == ['$'] and buffer !=['$']:
+            while buffer != ['$']:
+                error_list.append(f"\033[91mUnMatched Token {buffer[-1].type} at line {buffer[-1].line}\033[0m")
                 buffer = buffer[:-1]
         if stack == ['$'] and buffer == ['$']:
             if len(error_list) == 0 :
@@ -608,6 +638,7 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
                 #               "\033[92mValid\033[0m"))
                 return "\n\033[92mValid String!\033[0m", valid_string_list, header
             else:
+
                 total = [f'{buffer}', f'{stack}', f'InValid']
                 valid_string_list.append(total)
                 # print("{:>20} {:>20} {:>20}"
@@ -619,22 +650,42 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
 
             # take font of buffer (y) and tos (x)
             x = list(diction.keys()).index(stack[0])
-            y = table_term_list.index(buffer[-1])
+
+            target_buffer: str
+            if buffer == ['$']:
+                target_buffer = '$'
+            else:
+                target_buffer = buffer[-1].type
+            y = table_term_list.index(target_buffer)
             if parsing_table[x][y] != '' and parsing_table[x][y] != "Sync":
                 # format table entry received
                 entry = parsing_table[x][y]
-                total = [f'{buffer}',f'{stack}', f'T[{stack[0]}][{buffer[-1]}] = {entry}']
+                buffer_str: list = []
+                if type(buffer) != 'str':
+                    buffer_str.append('$')
+                    for b in buffer:
+                        if b == '$':
+                            continue
+                        buffer_str.append(b.type)
+
+                if buffer == ['$']:
+                    target_buffer = '$'
+                else:
+                    target_buffer = buffer[-1].type
+                total = [f'{buffer_str}',f'{stack}', f'T[{stack[0]}][{target_buffer}] = {entry}']
+                valid_string_list.append(total)
                 # print("{:>20} {:>20} {:>25}".
                 #       format(' '.join(buffer),
                 #              ' '.join(stack),
                 #              f"T[{stack[0]}][{buffer[-1]}] = {entry}"))
+
+
                 lhs_rhs = entry.split("->")
                 lhs_rhs[1] = lhs_rhs[1].replace('#', '').strip()
                 entryrhs = lhs_rhs[1].split()
                 tmp_stack: list = []
                 for ent in entryrhs:
-                    new_node = TreeNode(ent)
-                    top_node.add_child(new_node)
+                    new_node = Node(ent, parent=top_node)
                     tmp_stack.append(new_node)
                 tmp_stack.reverse()
                 for tmp in tmp_stack:
@@ -652,8 +703,7 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
                 # return f"\nInvalid String! No rule at " \
                 #        f"Table[{stack[0]}][{buffer[-1]}]."
 
-                error_list.append(f"\033[91m{buffer[-1]} is error \nExpectation:\n{expected_items(stack[0])}\033[0m")
-                a = parsing_table[x][y]
+                error_list.append(f"\033[91m{buffer[-1].type} is error at line {buffer[-1].line} \nExpectation:\n{expected_items(stack[0])}\033[0m\n")
                 if parsing_table[x][y]== "Sync":
                     stack = stack[1:]
                 elif '#' in firsts[stack[0]]:
@@ -664,8 +714,18 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
                 #     pass
         else:
             # stack top is Terminal
-            if stack[0] == buffer[-1]:
-                total = [f'{buffer}',f'{stack}', f'Matched:{stack[0]}']
+            if buffer == ['$']:
+                target_buffer = '$'
+            else:
+                target_buffer = buffer[-1].type
+            if stack[0] == target_buffer:
+                buffer_str: list = []
+                for b in buffer:
+                    if b == '$':
+                        buffer_str.append('$')
+                        continue
+                    buffer_str.append(b.type)
+                total = [f'{buffer_str}',f'{stack}', f'\n\033[92mMatched:{stack[0]}\033[0m']
                 valid_string_list.append(total)
                 # print("{:>20} {:>20} {:>20}"
                 #       .format(' '.join(buffer),
@@ -676,7 +736,7 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, i
             else:
                 # return "\nInvalid String! " \
                 #        "Unmatched terminal symbols"
-                error_list.append(f"\033[91m{buffer[-1]} is error \nExpectatio:\n{stack[0]}\033[0m")
+                error_list.append(f"\033[91m{buffer[-1].type} is error at line {buffer[-1].line} \nExpectation:\n{stack[0]}\033[0m\n")
                 stack = stack[1:]
 
 
@@ -876,18 +936,9 @@ term_userdef =['T_LP' ,'T_RP' ,'T_LC' ,'T_RC' ,'T_LB' ,'T_RB',
                ]
 
 
-file = open('SyntaxInput.txt', 'rt')
-file.read()
-sample_input_string = ('T_Int T_Id T_LP T_Int T_Id T_Comma T_Bool T_Id T_Comma T_Char T_Id T_RP T_LC '
-                       'T_Int T_Id T_Semicolon '
-                       'T_If T_LP T_Id T_LOp_AND T_Id T_ROp_E T_Character T_RP T_LC '
-                       'T_Id T_Assign T_Id T_AOp_ML T_Decimal T_Semicolon '
-                       'T_RC T_Else T_LC '
-                       'T_Id T_Assign T_Id T_AOp_ML T_Decimal T_Semicolon '
-                       'T_RC '
-                       'T_Return T_Id T_Semicolon '
-                       'T_RC')
-file.close()
+sample_input_string = ('T_If T_LP T_Id T_ROp_GE T_Decimal T_LOp_OR T_Id T_ROp_L T_Id T_LOp_AND T_LOp_NOT T_Id T_RP T_LC '
+                       'T_Id T_Assign T_True T_Semicolon T_RC')
+
 
 
 function_test = ('T_Int T_Id T_LP T_Int T_Id T_Comma T_Bool T_Id T_Comma T_Char T_Id T_RP T_LC '
@@ -937,34 +988,49 @@ firsts = {}
 follows = {}
 
 # computes all FIRSTs for all non terminals
-computeAllFirsts()
-# assuming first rule has start_symbol
-# start symbol can be modified in below line of code
-start_symbol = list(diction.keys())[0]
-# computes all FOLLOWs for all occurrences
-computeAllFollows()
-# generate formatted first and follow table
-# then generate parse table
-root = TreeNode(start_symbol)
-(parsing_table, result, tabTerm) = createParseTable()
 
-# validate string input using stack-buffer concept
-if sample_input_string != None:
-    validity, valid_string_list, header = validateStringUsingStackBuffer(parsing_table, result,
-                                              tabTerm, sample_input_string,
-                                              term_userdef ,start_symbol)
-    print(create_pretty_table(header, valid_string_list, 'l'))
 
-    print('\n\n')
-    print( validity)
-    print('\n\n')
 
-    for err in error_list:
-        print(err)
-    print(root)
-else:
-    print("\nNo input String detected")
+# root = TreeNode(start_symbol)
 
+start_symbol = None
+root = None
+def starting_SyntaxAnalyzer():
+    global start_symbol, root
+    computeAllFirsts()
+    # assuming first rule has start_symbol
+    # start symbol can be modified in below line of code
+    start_symbol = list(diction.keys())[0]
+    # computes all FOLLOWs for all occurrences
+    computeAllFollows()
+    # generate formatted first and follow table
+    # then generate parse table
+    root = Node(start_symbol)
+
+
+    read_input('SyntaxInput.txt')
+    (parsing_table, result, tabTerm) = createParseTable()
+
+    # validate string input using stack-buffer concept
+    if sample_input_string != None:
+        validity, valid_string_list, header = validateStringUsingStackBuffer(parsing_table, result,
+                                                                             tabTerm,
+                                                                             term_userdef, start_symbol)
+        print(create_pretty_table(header, valid_string_list, 'l'))
+
+        print('\n\n')
+        print(validity)
+        print('\n\n')
+
+        for err in error_list:
+            print(err)
+
+        # print(root)
+        root = tree(root)
+        for pre, fill, node in RenderTree(root):
+            print(f"{pre}{node.name}")
+    else:
+        print("\nNo input String detected")
 
 # Author: Tanmay P. Bisen
 
