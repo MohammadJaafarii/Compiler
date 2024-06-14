@@ -23,9 +23,17 @@ def is_alpha(character):
 def keyword_identifier(line: str, iterator: int):
     global start_index, line_start_index, line_index, KEYWORDS
     token = ''
-    while iterator < len(line) and is_alpha(line[iterator]):
-        token += line[iterator]
-        iterator += 1
+    while iterator < len(line):
+        if is_alpha(line[iterator]):
+            token += line[iterator]
+            iterator += 1
+        else:
+            if token in KEYWORDS:
+                tk = Token(name=token, type=KEYWORDS[token], value=None, location=start_index,
+                           length=len(token), line=line_index)
+                return tk
+            return None
+
 
     if token in KEYWORDS:
         tk = Token(name=token, type=KEYWORDS[token], value=None,location=start_index,
@@ -216,7 +224,7 @@ def display_and_save():
     file = open('SyntaxInput.txt', 'w')
     for key in symboleTable.entries:
         if not symboleTable.entries[key]['error'] and symboleTable.entries[key]['type'] not in ['T_Comment', 'T_Whitespace']:
-            str = f"{symboleTable.entries[key]['type']} {symboleTable.entries[key]['name']} {symboleTable.entries[key]['line']}\n"
+            str = f"{symboleTable.entries[key]['type']} {symboleTable.entries[key]['name'].replace(" ",'')} {symboleTable.entries[key]['line']}\n"
             file.write(str)
 
     file.close()

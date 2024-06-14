@@ -6,7 +6,7 @@ class Token:
     def __init__(self, type, name, line):
         self.type: str = type
         self.name: str = name
-        self.line: int = int(line)
+        self.line: int = line
 
 def read_input(file_name):
     global input_string
@@ -39,20 +39,7 @@ from prettytable import PrettyTable
 error_list: list = []
 
 
-# def create_pretty_table(header: list , pretty_table: list):
-#
-#     global nonterm_userdef
-#     # ایجاد یک جدول با ستون‌های خالی
-#     table = PrettyTable()
-#     # تنظیم نام ستون‌ها بر اساس طول اولین سطر
-#     num_columns = len(header)
-#     columns = header
-#     table.field_names = columns
-#     # پر کردن جدول با داده‌های آرایه
-#     for row in pretty_table:
-#         table.add_row([row])
-#
-#     return table
+
 def create_pretty_table(header: list , pretty_table: list, align = None):
 
     global nonterm_userdef
@@ -359,19 +346,6 @@ def computeAllFirsts():
         # save result in 'firsts' list
         firsts[y] = t
 
-    # header = ['Non Terminal', 'Firsts']
-    # first_list: list = []
-    # key_list = list(firsts.keys())
-    # index = 0
-    # for gg in firsts:
-    #     total_list = [f"{key_list[index]}",f"{firsts.get(gg)}"]
-    #     first_list.append(total_list)
-    #     index += 1
-    #
-    # print(create_pretty_table(header, first_list))
-    # print('\n\n')
-
-
 def computeAllFollows():
     global start_symbol, rules, nonterm_userdef, \
         term_userdef, diction, firsts, follows
@@ -382,17 +356,6 @@ def computeAllFollows():
             for g in sol:
                 solset.add(g)
         follows[NT] = solset
-    # header = ['Non Terminal', 'Follows']
-    # follow_list: list = []
-    # key_list = list(follows.keys())
-    # index = 0
-    # for gg in follows:
-    #     total = [f'{key_list[index]}',f'{follows[gg]}']
-    #     follow_list.append(total)
-    #     index += 1
-    #
-    # print(create_pretty_table(header, follow_list))
-    # print('\n\n')
 
 # create parse table
 def createParseTable():
@@ -528,14 +491,12 @@ def createParseTable():
                     rule_list.append(i)
 
         rule_with_noneTerminal.append(rule_list)
-        # print(f"{ntlist[j]} \t\t{frmt1.format(*y)}")
         j += 1
     print(create_pretty_table(terminal_list, rule_with_noneTerminal))
     print('\n\n')
     if err_count != 0:
         print(f"\033[91mNumber of Error: {err_count}\033[91m")
 
-    # print(show_parse_table(terminals, mat))
     return (mat, grammar_is_LL, terminals)
 
 
@@ -584,14 +545,6 @@ def expected_items(stack):
 def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, term_userdef ,start_symbol):
     global root, input_string
 
-    # print('\n\n')
-    # for i in range(0, len(input_string)+ 20):
-    #     print('-', end='')
-    # print(f"\nValidate String => {input_string}")
-    # for i in range(0, len(input_string) + 20):
-    #     print('-', end='')
-    # print('\n\n')
-
     # for more than one entries
     # - in one cell of parsing table
     if grammarll1 == False:
@@ -632,20 +585,14 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, t
             if len(error_list) == 0 :
                 total = [f'{buffer}',f'{stack}', f'Valid']
                 valid_string_list.append(total)
-                # print("{:>20} {:>20} {:>20}"
-                #       .format(' '.join(buffer),
-                #               ' '.join(stack),
-                #               "\033[92mValid\033[0m"))
                 return "\n\033[92mValid String!\033[0m", valid_string_list, header
+
             else:
 
                 total = [f'{buffer}', f'{stack}', f'InValid']
                 valid_string_list.append(total)
-                # print("{:>20} {:>20} {:>20}"
-                #       .format(' '.join(buffer),
-                #               ' '.join(stack),
-                #               "\033[91mInValid\033[91m"))
                 return '\n\033[91mInvalid String!\033[91m', valid_string_list, header
+
         elif stack[0] not in term_userdef:
 
             # take font of buffer (y) and tos (x)
@@ -674,12 +621,6 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, t
                     target_buffer = buffer[-1].type
                 total = [f'{buffer_str}',f'{stack}', f'T[{stack[0]}][{target_buffer}] = {entry}']
                 valid_string_list.append(total)
-                # print("{:>20} {:>20} {:>25}".
-                #       format(' '.join(buffer),
-                #              ' '.join(stack),
-                #              f"T[{stack[0]}][{buffer[-1]}] = {entry}"))
-
-
                 lhs_rhs = entry.split("->")
                 lhs_rhs[1] = lhs_rhs[1].replace('#', '').strip()
                 entryrhs = lhs_rhs[1].split()
@@ -690,18 +631,8 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, t
                 tmp_stack.reverse()
                 for tmp in tmp_stack:
                     stack_node.insert(0, tmp)
-                # Create Tree
-                # if flag:
-                    # root = Node(stack[0])
-                    # for ent in entryrhs:
-                    #     Node(ent, parent=root)
-
-                # else:
-                    # flag = True
                 stack = entryrhs + stack[1:]
             else:
-                # return f"\nInvalid String! No rule at " \
-                #        f"Table[{stack[0]}][{buffer[-1]}]."
 
                 error_list.append(f"\033[91m{buffer[-1].type} is error at line {buffer[-1].line} \nExpectation:\n{expected_items(stack[0])}\033[0m\n")
                 if parsing_table[x][y]== "Sync":
@@ -710,8 +641,7 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, t
                     stack = stack[1:]
                 elif parsing_table[x][y] == '':
                     buffer = buffer[:-1]
-                # if buffer[-1] in firsts[stack[1]]:
-                #     pass
+
         else:
             # stack top is Terminal
             if buffer == ['$']:
@@ -727,91 +657,16 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, t
                     buffer_str.append(b.type)
                 total = [f'{buffer_str}',f'{stack}', f'\n\033[92mMatched:{stack[0]}\033[0m']
                 valid_string_list.append(total)
-                # print("{:>20} {:>20} {:>20}"
-                #       .format(' '.join(buffer),
-                #               ' '.join(stack),
-                #               f"Matched:{stack[0]}"))
+
                 buffer = buffer[:-1]
                 stack = stack[1:]
             else:
-                # return "\nInvalid String! " \
-                #        "Unmatched terminal symbols"
+
                 error_list.append(f"\033[91m{buffer[-1].type} is error at line {buffer[-1].line} \nExpectation:\n{stack[0]}\033[0m\n")
                 stack = stack[1:]
 
 
 
-# DRIVER CODE - MAIN
-
-# NOTE: To test any of the sample sets, uncomment ->
-# 'rules' list, 'nonterm_userdef' list, 'term_userdef' list
-# and for any String validation uncomment following line with
-# 'sample_input_String' variable.
-
-sample_input_string = None
-
-# sample set 1 (Result: Not LL(1))
-# rules=["A -> S B | B",
-#        "S -> a | B c | #",
-#        "B -> b | d"]
-# nonterm_userdef=['A','S','B']
-# term_userdef=['a','c','b','d']
-# sample_input_string="b c b"
-
-# sample set 2 (Result: LL(1))
-# rules=["S -> A | B C",
-#        "A -> a | b",
-#        "B -> p | #",
-#        "C -> c"]
-# nonterm_userdef=['A','S','B','C']
-# term_userdef=['a','c','b','p']
-# sample_input_string="p c"
-
-# sample set 3 (Result: LL(1))
-# rules=["S -> A B | C",
-#        "A -> a | b | #",
-#        "B-> p | #",
-#        "C -> c"]
-# nonterm_userdef=['A','S','B','C']
-# term_userdef=['a','c','b','p']
-# sample_input_string="a c b"
-
-# sample set 4 (Result: Not LL(1))
-# rules = ["S -> A B C | C",
-#          "A -> a | b B | #",
-#          "B -> p | #",
-#         "C -> c"]
-# nonterm_userdef=['A','S','B','C']
-# term_userdef=['a','c','b','p']
-# sample_input_string="b p p c"
-
-# sample set 5 (With left recursion)
-# rules=["A -> B C c | g D B",
-#        "B -> b C D E | #",
-#        "C -> D a B | c a",
-#        "D -> # | d D",
-#        "E -> E a f | c"
-#       ]
-# nonterm_userdef=['A','B','C','D','E']
-# term_userdef=["a","b","c","d","f","g"]
-# sample_input_string="b a c a c"
-
-# sample set 6
-# rules=["E -> T E'",
-#        "E' -> + T E' | #",
-#        "T -> F T'",
-#        "T' -> * F T' | #",
-#        "F -> ( E ) | id"
-# ]
-# nonterm_userdef=['E','E\'','F','T','T\'']
-# term_userdef=['id','+','*','(',')']
-# sample_input_string="id * * id"
-# example string 1
-# sample_input_string="( id * id )"
-# example string 2
-# sample_input_string="( id ) * id + id"
-
-# sample set 7 (left factoring & recursion present)
 rules =[ 'program -> stmt stmt_list_tail',
     'stmt_list_tail -> stmt stmt_list_tail| #',
     'stmt -> if_stmt | decl_or_func | for_stmt | return_stmt | expr_stmt | print_stmt | break_stmt | continue_stmt',
@@ -965,34 +820,11 @@ a = ('T_If T_LP T_Id T_ROp_E T_Decimal T_RP T_LC '
                        'T_Id T_Assign T_Decimal T_Semicolon '
                        'T_Id T_Assign T_Decimal T_Semicolon '
                        'T_RC')
-# sample set 8 (Multiple char symbols T & NT)
-# rules = ["S -> NP VP",
-#          "NP -> P | PN | D N",
-#          "VP -> V NP",
-#          "N -> championship | ball | toss",
-#          "V -> is | want | won | played",
-#          "P -> me | I | you",
-#          "PN -> India | Australia | Steve | John",
-#          "D -> the | a | an"]
-#
-# nonterm_userdef = ['S', 'NP', 'VP', 'N', 'V', 'P', 'PN', 'D']
-# term_userdef = ["championship", "ball", "toss", "is", "want",
-#                 "won", "played", "me", "I", "you", "India",
-#                 "Australia","Steve", "John", "the", "a", "an"]
-# sample_input_string = "India won the championship"
 
-# diction - store rules inputted
-# firsts - store computed firsts
+
 diction = {}
 firsts = {}
 follows = {}
-
-# computes all FIRSTs for all non terminals
-
-
-
-# root = TreeNode(start_symbol)
-
 start_symbol = None
 root = None
 def starting_SyntaxAnalyzer():
@@ -1012,7 +844,7 @@ def starting_SyntaxAnalyzer():
     (parsing_table, result, tabTerm) = createParseTable()
 
     # validate string input using stack-buffer concept
-    if sample_input_string != None:
+    if input_string != None:
         validity, valid_string_list, header = validateStringUsingStackBuffer(parsing_table, result,
                                                                              tabTerm,
                                                                              term_userdef, start_symbol)
