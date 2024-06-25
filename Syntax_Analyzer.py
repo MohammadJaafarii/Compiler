@@ -2,6 +2,32 @@ from anytree import Node, RenderTree, PostOrderIter
 from element_lists import TERMINALS
 import copy
 input_string: list = []
+
+tree_index:int = 0
+def dfs(node, visited=None):
+    global tree_index
+    if visited is None:
+        visited = set()
+
+    # اگر نود قبلاً بازدید شده، از آن عبور کن
+    if node in visited:
+        return
+
+    # نود جاری را بازدید کن
+    print(node.name)
+    visited.add(node)
+
+    if node.name in term_userdef:
+        term_node = Node(input_string[tree_index], parent= node)
+        print(term_node.name.name)
+        print(f'-------{input_string[tree_index]}')
+        tree_index -= 1
+
+    # بازدید از بچه‌های نود جاری
+    for child in node.children:
+        dfs(child, visited)
+
+
 class Token:
     def __init__(self, type, name, line):
         self.type: str = type
@@ -17,23 +43,6 @@ def read_input(file_name):
 
             tk = Token(line[0], line[1], line[2])
             input_string.append(tk)
-class TreeNode:
-    def __init__(self, symbol, parent=None):
-        self.symbol = symbol
-        self.children = []
-        self.parent = parent
-
-    def add_child(self, child_node):
-        self.children.append(child_node)
-        child_node.parent = self
-
-    def __repr__(self, level=0):
-        ret = " " * (level * 4) + f"{self.symbol}\n"
-        for child in self.children:
-            ret += child.__repr__(level + 1)
-        return ret
-
-
 
 from prettytable import PrettyTable
 error_list: list = []
@@ -433,8 +442,6 @@ def createParseTable():
                 if mat[xnt][yt] == '':
                     mat[xnt][yt] = mat[xnt][yt] \
                                    + f"{lhs}->{' '.join(y)}"
-                    if mat[xnt][yt] == '':
-                        print('hi')
                 else:
                     # if rule already present
                     if f"{lhs}->{y}" in mat[xnt][yt]:
@@ -500,7 +507,7 @@ def createParseTable():
     return (mat, grammar_is_LL, terminals)
 
 
-def tree(root: TreeNode):
+def tree(root):
     i = 0
     for node in PostOrderIter(root):
         if not node.children:
@@ -518,7 +525,7 @@ def define_sync(parser_table):
         for term in follows[nt]:
             xnt = ntlist.index(nt)
             if term == '$':
-                yt = 41
+                yt = len(term_userdef)
             else:
                 yt = terminals.index(term)
             if (parser_table[xnt] [yt] == ''):
@@ -571,6 +578,7 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, t
     total:list = []
     stack_node = [root]
     top_node = root
+    tree_index = len(input_string) - 1
     while True:
         if len(stack_node) > 0:
             top_node = stack_node[0]
@@ -627,6 +635,7 @@ def validateStringUsingStackBuffer(parsing_table, grammarll1, table_term_list, t
                 tmp_stack: list = []
                 for ent in entryrhs:
                     new_node = Node(ent, parent=top_node)
+
                     tmp_stack.append(new_node)
                 tmp_stack.reverse()
                 for tmp in tmp_stack:
@@ -688,7 +697,7 @@ rules =[ 'program -> stmt stmt_list_tail',
     'value -> bool | char | number',
     'bool -> T_False | T_True',
     'char -> T_Character | T_String',
-    'number -> T_Decimal | T_Hexadecimal',
+    'number -> T_Decimal | T_Hexadecimal | T_Id',
     'if_stmt -> T_If T_LP condition T_RP block opt_tail',
     'opt_tail -> T_Else opt_tail_tail | #',
     'opt_tail_tail -> T_If T_LP condition T_RP block opt_tail | block opt_tail',
@@ -698,7 +707,7 @@ rules =[ 'program -> stmt stmt_list_tail',
     'or_condition_tail -> T_LOp_OR and_condition or_condition_tail | #',
     'and_condition -> not_condition and_condition_tail',
     'and_condition_tail -> T_LOp_AND not_condition and_condition_tail | #',
-    'not_condition -> T_LOp_NOT T_Id | expr not_condition_tail',
+    'not_condition -> T_LOp_NOT  expr | expr not_condition_tail',
     'not_condition_tail -> relop expr | #',
 
     'break_stmt -> T_Break T_Semicolon',
@@ -710,7 +719,7 @@ rules =[ 'program -> stmt stmt_list_tail',
     'expr_tail -> T_AOp_PL term  | T_AOp_MN term  | T_Assign term ',
     'term -> factor term_tail_tail',
     'term_tail -> T_AOp_DV factor  | T_AOp_RM factor  | T_AOp_ML factor ',
-    'factor -> T_Id isarray | T_Decimal | T_Hexadecimal | T_LP expr T_RP | T_False | T_True | T_Character',
+    'factor -> T_Id isarray | T_Decimal | T_Hexadecimal | T_LP expr T_RP | T_False | T_True | T_Character ',
     'isarray -> T_LB index T_RB | #',
     'index -> T_Hexadecimal | T_Decimal | T_Id',
     'for_stmt -> T_For T_LP for_tail',
@@ -791,6 +800,8 @@ term_userdef =['T_LP' ,'T_RP' ,'T_LC' ,'T_RC' ,'T_LB' ,'T_RB',
                ]
 
 
+
+
 sample_input_string = ('T_If T_LP T_Id T_ROp_GE T_Decimal T_LOp_OR T_Id T_ROp_L T_Id T_LOp_AND T_LOp_NOT T_Id T_RP T_LC '
                        'T_Id T_Assign T_True T_Semicolon T_RC')
 
@@ -828,7 +839,7 @@ follows = {}
 start_symbol = None
 root = None
 def starting_SyntaxAnalyzer():
-    global start_symbol, root
+    global start_symbol, root, input_string, tree_index
     computeAllFirsts()
     # assuming first rule has start_symbol
     # start symbol can be modified in below line of code
@@ -860,9 +871,18 @@ def starting_SyntaxAnalyzer():
         # print(root)
         root = tree(root)
         for pre, fill, node in RenderTree(root):
+            a = type(node.name)
+            if type(node.name) == type(input_string[0]):
+                node.name = node.name.name
+            print(f"{pre}{node.name}")
+        tree_index = len(input_string)-1
+        dfs(root)
+        root = tree(root)
+        for pre, fill, node in RenderTree(root):
+            a = type(node.name)
+            if type(node.name) == type(input_string[0]):
+                node.name = node.name.name
             print(f"{pre}{node.name}")
     else:
         print("\nNo input String detected")
-
-# Author: Tanmay P. Bisen
 

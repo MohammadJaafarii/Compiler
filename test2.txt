@@ -16,7 +16,6 @@ int main() {
     // Perform arithmetic operations
     int _num1 = 20;
     int _num2 = 5;
-    int _power = static_cast<int>(pow(num1, 2));
 
     // Print the results of arithmetic operations
     print("Sum: ", sum);
@@ -26,10 +25,13 @@ int main() {
     print("Power: ", power);
 
     // Test boolean conditions and loops
-    for (int i = 0; i < 10; ++i) {
-        if (i % 2 == 0) {
-            print(" is even.", i);
-        } else {
+    for (int i = 0; i==1 && b==2 || !flag; i = i + 1) {
+        if (i % 2 == 0){
+         a = b + c;
+         int a = b;
+
+        }
+       else {
             print(" is odd.", i);
         }
     }
