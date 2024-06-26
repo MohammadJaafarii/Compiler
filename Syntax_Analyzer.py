@@ -1,6 +1,8 @@
 from anytree import Node, RenderTree, PostOrderIter
 from element_lists import TERMINALS
+import IdentifierTable
 import copy
+IdTable = IdentifierTable.IdentifierTable()
 input_string: list = []
 
 tree_index:int = 0
@@ -883,6 +885,208 @@ def starting_SyntaxAnalyzer():
             if type(node.name) == type(input_string[0]):
                 node.name = node.name.name
             print(f"{pre}{node.name}")
+
+        try:
+            if IdTable.func['main'].retVal != 'T_Int' or IdTable.func['main'].paramType != None:
+                raise Exception('error in declare main function')
+        except:
+            raise Exception('program most have main function')
     else:
         print("\nNo input String detected")
 
+
+#----------------------------------------------------------------------------------------------
+#-------------------phase three----------------------------------------------------------------
+
+def travesr_parse_tree(node, visited=None):
+    if visited is None:
+        visited = set()
+
+    # اگر نود قبلاً بازدید شده، از آن عبور کن
+    if node in visited:
+        return
+
+    # نود جاری را بازدید کن
+    visited.add(node)
+    if node.name == 'decl_or_func':
+        arg_node = tree(node)
+        decl_or_func(arg_node)
+
+    elif node.name == 'T_LC':
+        IdTable.enter_scope()
+
+    elif node.name == 'T_RC':
+        IdTable.exit_scope()
+
+    elif node.name == 'condition':
+        arg_node = tree(node)
+        rt = Node(name='condition')
+        condition(arg_node,rt)
+        check_bitOp(rt)
+
+    elif node.name == 'expr':
+        arg_node = tree(node)
+        rt = None
+        rt = Node(name='expr')
+        expression(arg_node,rt)
+        checkOp(rt)
+
+    elif node.name == 'index' or node.name=='number':
+        for child in node.children:
+            if child.name == 'T_Decimal':
+                if child.children[0].name == '0':
+                    raise Exception('index most be greater than 0')
+            if child.name == 'T_Id':
+                if IdTable.lookup(child.children[0].name).type != 'T_Int':
+                    raise Exception('index most be integer')
+
+
+
+    # بازدید از بچه‌های نود جاری
+    for child in node.children:
+        travesr_parse_tree(child, visited)
+
+
+def decl_or_func(node):
+    func_flag = False
+    for child in node.children:
+        if child.name == 'decl_or_func_tail':
+            for ch in child.children:
+                if ch.name == 'T_LP':
+                    func_flag = True
+
+    if func_flag == True:
+        #function
+        type = None
+        name = None
+        for child in node.children:
+            if child.name == 'type':
+                type = child.children[0].name
+            elif child.name == 'T_Id':
+                name = child.children[0].name
+        paramType = []
+        function(node,paramType)
+        if paramType == []:
+            paramType = None
+        IdTable.enter_func(name,type,type,paramType)
+
+
+
+
+    else:
+        #variable
+        variable(node)
+
+
+def function(node, paramType=None, visited=None):
+    if visited is None:
+        visited = set()
+    if paramType is None:
+        paramType = []
+
+    # اگر نود قبلاً بازدید شده، از آن عبور کن
+    if node in visited:
+        return
+    if node.name == 'parameter':
+        for child in node.children:
+            if child.name == 'type':
+                paramType.append(child.children[0].name)
+    visited.add(node)
+
+    # بازدید از بچه‌های نود جاری
+    for child in node.children:
+        function(child, paramType,visited)
+
+
+def variable(node,return_value={} ,visited=None):
+    if visited is None:
+        visited = set()
+
+    # اگر نود قبلاً بازدید شده، از آن عبور کن
+    if node in visited:
+        return
+    if node.name == 'type':
+        return_value['type'] = node.children[0].name
+    elif node.name == 'T_Id':
+        IdTable.declare(node.children[0].name,return_value['type'])
+
+
+    visited.add(node)
+
+    # بازدید از بچه‌های نود جاری
+    for child in node.children:
+        variable(child, return_value,visited)
+
+
+def condition(node,rt,visited=None):
+
+    if visited is None:
+        visited = set()
+
+    # اگر نود قبلاً بازدید شده، از آن عبور کن
+    if node in visited:
+        return
+
+    # نود جاری را بازدید کن
+    visited.add(node)
+
+    if (node.name not in term_userdef) and (node.name not in nonterm_userdef) and node.name !='ε':
+        rt = Node(node.name, parent=rt)
+
+    # بازدید از بچه‌های نود جاری
+    for child in node.children:
+        condition(child, rt,visited)
+
+def check_bitOp(node):
+
+    for i in range(0,len(node.children)):
+        if node.children[i].name in ['&&','||']:
+            if node.children[i-1].name not in  ['true', 'false']:
+                if IdTable.scopes[-1][node.children[i-1].name].type != 'T_Bool':
+                    raise Exception('operand is not bool')
+            if node.children[i + 1].name not in ['true', 'false']:
+                if IdTable.scopes[-1][node.children[i + 1].name].type != 'T_Bool':
+                    raise Exception('operand is not bool')
+
+        elif node.children[i].name in ['!']:
+            if node.children[i + 1].name not in ['true', 'false']:
+                if IdTable.scopes[-1][node.children[i + 1].name].type != 'T_Bool':
+                    raise Exception('operand is not bool')
+
+def expression(node,rt,visited=None):
+    if visited is None:
+        visited = set()
+
+    # اگر نود قبلاً بازدید شده، از آن عبور کن
+    if node in visited:
+        return
+
+    # نود جاری را بازدید کن
+    visited.add(node)
+
+    if (node.name not in term_userdef) and (node.name not in nonterm_userdef) and node.name !='ε':
+        rt = Node(node.name, parent=rt)
+
+    # بازدید از بچه‌های نود جاری
+    for child in node.children:
+        expression(child, rt,visited)
+
+def checkOp(node):
+    for i in range(0,len(node.children)):
+        if node.children[i].name in ['+','-','*','/']:
+            a = node.children[i-1].name
+            if not (a.isdigit()):
+                print(IdTable.scopes[-1])
+                if IdTable.lookup(node.children[i-1].name).type != 'T_Int':
+                    raise Exception('operand is not int')
+            b = node.children[i + 1].name
+            if not (b.isdigit()):
+                if IdTable.scopes[-2][node.children[i + 1].name].type != 'T_Int':
+                    raise Exception('operand is not int')
+
+            if node.children[i].name in ['=']:
+                a = node.children[i - 1].name
+                if not (a.isdigit()):
+                    print(IdTable.scopes[-1])
+                    if IdTable.lookup(node.children[i - 1].name).type != 'T_Int':
+                        raise Exception('operand is not int')
