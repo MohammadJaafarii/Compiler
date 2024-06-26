@@ -894,7 +894,6 @@ def starting_SyntaxAnalyzer():
     else:
         print("\nNo input String detected")
 
-
 #----------------------------------------------------------------------------------------------
 #-------------------phase three----------------------------------------------------------------
 
@@ -937,9 +936,16 @@ def travesr_parse_tree(node, visited=None):
                 if child.children[0].name == '0':
                     raise Exception('index most be greater than 0')
             if child.name == 'T_Id':
-                if IdTable.lookup(child.children[0].name).type != 'T_Int':
-                    raise Exception('index most be integer')
+                try:
+                    if IdTable.lookup(child.children[0].name).type != 'T_Int':
+                        raise Exception('index most be integer')
+                except :
+                    raise Exception(f'{child.children[0].name} most declared')
 
+    elif node.name == 'factor':
+        for child in node.children:
+            if child.name == 'T_Id':
+               IdTable.lookup(child.children[0].name)
 
 
     # بازدید از بچه‌های نود جاری
@@ -1042,15 +1048,15 @@ def check_bitOp(node):
     for i in range(0,len(node.children)):
         if node.children[i].name in ['&&','||']:
             if node.children[i-1].name not in  ['true', 'false']:
-                if IdTable.scopes[-1][node.children[i-1].name].type != 'T_Bool':
+                if IdTable.lookup(node.children[i-1].name).type != 'T_Bool':
                     raise Exception('operand is not bool')
             if node.children[i + 1].name not in ['true', 'false']:
-                if IdTable.scopes[-1][node.children[i + 1].name].type != 'T_Bool':
+                if IdTable.lookup(node.children[i+1].name).type.type != 'T_Bool':
                     raise Exception('operand is not bool')
 
         elif node.children[i].name in ['!']:
             if node.children[i + 1].name not in ['true', 'false']:
-                if IdTable.scopes[-1][node.children[i + 1].name].type != 'T_Bool':
+                if IdTable.lookup(node.children[i+1].name).type != 'T_Bool':
                     raise Exception('operand is not bool')
 
 def expression(node,rt,visited=None):
@@ -1075,18 +1081,11 @@ def checkOp(node):
     for i in range(0,len(node.children)):
         if node.children[i].name in ['+','-','*','/']:
             a = node.children[i-1].name
-            if not (a.isdigit()):
-                print(IdTable.scopes[-1])
+            if not (a.isdigit() and a not in ['(',')']):
                 if IdTable.lookup(node.children[i-1].name).type != 'T_Int':
                     raise Exception('operand is not int')
             b = node.children[i + 1].name
-            if not (b.isdigit()):
+            if not (b.isdigit() and b not in ['(',')']):
                 if IdTable.scopes[-2][node.children[i + 1].name].type != 'T_Int':
                     raise Exception('operand is not int')
 
-            if node.children[i].name in ['=']:
-                a = node.children[i - 1].name
-                if not (a.isdigit()):
-                    print(IdTable.scopes[-1])
-                    if IdTable.lookup(node.children[i - 1].name).type != 'T_Int':
-                        raise Exception('operand is not int')
