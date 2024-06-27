@@ -1148,7 +1148,7 @@ def check_assign(node,type_org=None):
         a = node.children[i].name.name
         if (not a in ['+','-','*','/']) and (not a.isdigit()) and (not a in ['true','false']):
             if IdTable.lookup(node.children[i].name).type != type_org:
-                raise Exception(f"Not Matching type in line {node.children[i].name.line} for variable {a}\n{a}'s type: {node.children[i].name.type}"
+                raise Exception(f"Not Matching type in line {node.children[i].name.line} for variable {a}\n{a}'s type: {IdTable.lookup(node.children[i].name).type}"
                                 f"\nExpected type: {type_org}")
 
         elif a in ['true','false']:
