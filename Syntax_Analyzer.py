@@ -972,7 +972,9 @@ def decl_or_func(node):
             elif child.name == 'T_Id':
                 name = child.children[0].name
         paramType = []
-        function(node,paramType)
+        for pre, fill, node in RenderTree(node):
+            print(f"{pre}{node.name}")
+        function(node=node,paramType=paramType,type=type)
         if paramType == []:
             paramType = None
         IdTable.enter_func(name,type,type,paramType)
@@ -985,7 +987,7 @@ def decl_or_func(node):
         variable(node)
 
 
-def function(node, paramType=None, visited=None):
+def function(node,type,paramType=None, visited=None):
     if visited is None:
         visited = set()
     if paramType is None:
@@ -998,6 +1000,13 @@ def function(node, paramType=None, visited=None):
         for child in node.children:
             if child.name == 'type':
                 paramType.append(child.children[0].name)
+
+    if node.name == 'return_stmt':
+        for chile in node.children:
+            if chile.name == 'expr':
+                rt = tree(child)
+                check_assign(child,type)
+
     visited.add(node)
 
     # بازدید از بچه‌های نود جاری
@@ -1105,9 +1114,10 @@ def checkOp(node):
                     raise Exception('operand is not int')
 
 
-def check_assign(node):
-    type_org = IdTable.lookup(node.children[0].name).type
-    index = None
+def check_assign(node,type_org=None):
+    if type_org == None:
+        type_org = IdTable.lookup(node.children[0].name).type
+    index = 0
     for i in range(len(node.children)):
         if node.children[i].name == '=':
             index = i + 1
@@ -1125,10 +1135,6 @@ def check_assign(node):
         elif a.isdigit():
             if type_org == 'T_Bool':
                 raise Exception('in assaignment type not match')
-
-
-
-
 
 
 
