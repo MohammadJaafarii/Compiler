@@ -982,7 +982,6 @@ def decl_or_func(node):
         paramType = []
 
         function(node=node,paramType=paramType,type=type, name= name)
-        IdTable.exit_scope()
         if paramType == []:
             paramType = None
         IdTable.enter_func(name,type,type,paramType)
@@ -1007,9 +1006,15 @@ def function(node,type, name,paramType=None, visited=None):
         return
 
     if node.name == 'parameter':
+        tp = None
+        nm = None
         for child in node.children:
             if child.name == 'type':
                 paramType.append(child.children[0].name)
+                tp = child.children[0].name
+            if child.name == 'T_Id':
+                nm = child.children[0].name
+        IdTable.declare(name=nm,var_type=tp)
 
 
 
