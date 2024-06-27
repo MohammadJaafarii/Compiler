@@ -1,5 +1,4 @@
 from anytree import Node, RenderTree, PostOrderIter
-from element_lists import TERMINALS
 import copy
 import IdentifierTable
 input_string: list = []
@@ -872,19 +871,15 @@ def starting_SyntaxAnalyzer():
 
         # print(root)
         root = tree(root)
-        for pre, fill, node in RenderTree(root):
-            a = type(node.name)
-            if type(node.name) == type(input_string[0]):
-                node.name = node.name.name
-            print(f"{pre}{node.name}")
         tree_index = len(input_string)-1
         dfs(root)
-        root = tree(root)
         for pre, fill, node in RenderTree(root):
-            a = type(node.name)
+            tmp_node: Node = None
             if type(node.name) == type(input_string[0]):
-                node.name = node.name.name
-            print(f"{pre}{node.name}")
+                tmp_node = node.name.name
+            else:
+                tmp_node = node.name
+            print(f"{pre}{tmp_node}")
         travesr_parse_tree(root)
         try:
             if IdTable.func['main'].retVal != 'T_Int' or IdTable.func['main'].paramType != None:
@@ -896,7 +891,9 @@ def starting_SyntaxAnalyzer():
         print("\nNo input String detected")
 
 #----------------------------------------------------------------------------------------------
-#-------------------phase three----------------------------------------------------------------
+#---------------------------------------phase three--------------------------------------------
+#----------------------------------------------------------------------------------------------
+
 
 counter: int = 0
 def travesr_parse_tree(node, visited=None):
@@ -940,18 +937,19 @@ def travesr_parse_tree(node, visited=None):
     elif node.name == 'index' or node.name=='number':
         for child in node.children:
             if child.name == 'T_Decimal':
-                if child.children[0].name == '0':
-                    raise Exception('index most be greater than 0')
+                if int(child.children[0].name.name ) < 1:
+                    raise Exception(f'Index must be greater than 0 at line {child.children[0].name.line}')
             if child.name == 'T_Id':
                 try:
-                    if IdTable.lookup(child.children[0].name).type != 'T_Int':
-                        raise Exception('index most be integer')
+                    if IdTable.lookup(child.children[0].name.name).type != 'T_Int':
+                        raise Exception(f'Index most be integer at line {child.children[0].name.line}')
                 except :
-                    raise Exception(f'{child.children[0].name} most declared')
+                    raise Exception(f'{child.children[0].name.name} must be declared at line {child.children[0].name.line}')
 
     elif node.name == 'factor':
         for child in node.children:
             if child.name == 'T_Id':
+
                IdTable.lookup(child.children[0].name)
 
     if node.name == 'return_stmt':
@@ -980,7 +978,7 @@ def decl_or_func(node):
             if child.name == 'type':
                 type = child.children[0].name
             elif child.name == 'T_Id':
-                name = child.children[0].name
+                name = child.children[0].name.name
         paramType = []
 
         function(node=node,paramType=paramType,type=type, name= name)
@@ -1007,7 +1005,6 @@ def function(node,type, name,paramType=None, visited=None):
     # اگر نود قبلاً بازدید شده، از آن عبور کن
     if node in visited:
         return
-    print(node.name+'--------------------------')
 
     if node.name == 'parameter':
         for child in node.children:
@@ -1046,20 +1043,21 @@ def variable(node,return_value={} ,visited=None):
     if node.name == 'type':
         return_value['type'] = node.children[0].name
     elif node.name == 'T_Id':
-        IdTable.declare(node.children[0].name,return_value['type'])
+        IdTable.declare(node.children[0].name.name,return_value['type'])
     elif node.name == 'value':
         for c in node.children:
-            if c.name == 'bool':
+
+            if type(c.name) == type(input_string[0]) and c.name == 'bool':
                 if not (return_value['type'] == 'T_Bool'):
-                    raise Exception('value declaretion is not match')
+                    raise Exception(f'Value declaretion is not match at line {c.name.line}')
             if c.name == 'number':
                 for ch in c.children:
                     if ch.name == 'T_Hexadecimal' or ch.name == 'T_Decimal':
                         if not (return_value['type'] == 'T_Int'):
-                            raise Exception('value declaretion is not match')
+                            raise Exception('Value declaretion is not match')
                     elif ch.name == 'T_Id':
                         if IdTable.lookup(ch.children[0].name).type != return_value['type']:
-                            raise Exception('value declaretion is not match')
+                            raise Exception(f'Value declaretion is not match at line {ch.children[0].name.line}')
 
 
 
@@ -1092,18 +1090,19 @@ def condition(node,rt,visited=None):
 def check_bitOp(node):
 
     for i in range(0,len(node.children)):
-        if node.children[i].name in ['&&','||']:
-            if node.children[i-1].name not in  ['true', 'false']:
-                if IdTable.lookup(node.children[i-1].name).type != 'T_Bool':
-                    raise Exception('operand is not bool')
-            if node.children[i + 1].name not in ['true', 'false']:
-                if IdTable.lookup(node.children[i+1].name).type.type != 'T_Bool':
-                    raise Exception('operand is not bool')
 
-        elif node.children[i].name in ['!']:
-            if node.children[i + 1].name not in ['true', 'false']:
+        if node.children[i].name.name in ['&&','||']:
+            if node.children[i-1].name.name not in  ['true', 'false']:
+                if IdTable.lookup(node.children[i-1].name).type != 'T_Bool':
+                    raise Exception(f'Operand is not bool at line {node.children[i-1].name.line}')
+            if node.children[i + 1].name.name not in ['true', 'false']:
                 if IdTable.lookup(node.children[i+1].name).type != 'T_Bool':
-                    raise Exception('operand is not bool')
+                    raise Exception(f'Operand is not bool at line {node.children[i+1].name.line}')
+
+        elif node.children[i].name.name in ['!']:
+            if node.children[i + 1].name.name not in ['true', 'false']:
+                if IdTable.lookup(node.children[i+1].name).type != 'T_Bool':
+                    raise Exception(f'Operand is not bool at line {node.children[i+1].name.line}')
 
 def expression(node,rt,visited=None):
     if visited is None:
@@ -1125,15 +1124,15 @@ def expression(node,rt,visited=None):
 
 def checkOp(node):
     for i in range(0,len(node.children)):
-        if node.children[i].name in ['+','-','*','/']:
-            a = node.children[i-1].name
+        if node.children[i].name.name in ['+','-','*','/']:
+            a = node.children[i-1].name.name
             if not (a.isdigit() and a not in ['(',')']):
                 if IdTable.lookup(node.children[i-1].name).type != 'T_Int':
-                    raise Exception('operand is not int')
-            b = node.children[i + 1].name
+                    raise Exception(f'Operand is not int at line {node.children[i - 1].name.line}')
+            b = node.children[i + 1].name.name
             if not (b.isdigit() and b not in ['(',')']):
                 if IdTable.lookup(node.children[i+1].name).type != 'T_Int':
-                    raise Exception('operand is not int')
+                    raise Exception(f'Operand is not int at line {node.children[i+1].name.line}')
 
 
 def check_assign(node,type_org=None):
@@ -1141,22 +1140,22 @@ def check_assign(node,type_org=None):
         type_org = IdTable.lookup(node.children[0].name).type
     index = 0
     for i in range(len(node.children)):
-        if node.children[i].name == '=':
+        if node.children[i].name.name == '=':
             index = i + 1
             break
 
     for i in range(index,len(node.children)):
-        a = node.children[i].name
+        a = node.children[i].name.name
         if (not a in ['+','-','*','/']) and (not a.isdigit()) and (not a in ['true','false']):
-            if IdTable.lookup(a).type != type_org:
-                raise Exception('in assaignment type not match')
+            if IdTable.lookup(node.children[i].name).type != type_org:
+                raise Exception(f'Not Matching type in line {node.children[i].name.line} for variable {a}')
 
         elif a in ['true','false']:
             if type_org!= 'T_Bool':
-                raise Exception('in assaignment type not match')
+                raise Exception(f'Not Matching type in line {node.children[i].name.line} for variable {a}')
         elif a.isdigit():
             if type_org == 'T_Bool':
-                raise Exception('in assaignment type not match')
+                raise Exception(f'Not Matching type in line {node.children[i].name.line} for variable {a}')
 
 
 

@@ -30,6 +30,6 @@ class IdentifierTable:
 
     def lookup(self, name):
         for scope in reversed(self.scopes):
-            if name in scope:
-                return scope[name]
-        raise Exception(f"Variable '{name}' not declared")
+            if name.name in scope:
+                return scope[name.name]
+        raise Exception(f"Variable '{name.name}' not declared at line {name.line}")
