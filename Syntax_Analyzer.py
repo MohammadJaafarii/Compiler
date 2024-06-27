@@ -1047,9 +1047,9 @@ def variable(node,return_value={} ,visited=None):
     elif node.name == 'value':
         for c in node.children:
 
-            if type(c.name) == type(input_string[0]) and c.name.name == 'bool':
+            if c.name == 'bool':
                 if not (return_value['type'] == 'T_Bool'):
-                    raise Exception(f'Value declaretion is not match at line {c.name.line}')
+                    raise Exception(f'Value declaretion is not match')
             if c.name == 'number':
                 for ch in c.children:
                     if ch.name == 'T_Hexadecimal' or ch.name == 'T_Decimal':
@@ -1148,7 +1148,7 @@ def check_assign(node,type_org=None):
         a = node.children[i].name.name
         if (not a in ['+','-','*','/']) and (not a.isdigit()) and (not a in ['true','false']):
             if IdTable.lookup(node.children[i].name).type != type_org:
-                raise Exception(f"Not Matching type in line {node.children[i].name.line} for variable {a}\n{a}'s type: {IdTable.lookup(node.children[i].name).type}"
+                raise Exception(f"Not Matching type at line {node.children[i].name.line} for variable {a}\n<{a}>'s type: {IdTable.lookup(node.children[i].name).type}"
                                 f"\nExpected type: {type_org}")
 
         elif a in ['true','false']:
