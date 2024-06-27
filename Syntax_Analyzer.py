@@ -930,7 +930,7 @@ def travesr_parse_tree(node, visited=None):
         expression(arg_node,rt)
         checkOp(rt)
         for c in rt.children:
-            if c.name == '=':
+            if c.name.name == '=':
                 check_assign(rt)
 
 
@@ -1148,14 +1148,15 @@ def check_assign(node,type_org=None):
         a = node.children[i].name.name
         if (not a in ['+','-','*','/']) and (not a.isdigit()) and (not a in ['true','false']):
             if IdTable.lookup(node.children[i].name).type != type_org:
-                raise Exception(f'Not Matching type in line {node.children[i].name.line} for variable {a}')
+                raise Exception(f"Not Matching type in line {node.children[i].name.line} for variable {a}\n{a}'s type: {node.children[i].name.type}"
+                                f"\nExpected type: {type_org}")
 
         elif a in ['true','false']:
             if type_org!= 'T_Bool':
-                raise Exception(f'Not Matching type in line {node.children[i].name.line} for variable {a}')
+                raise Exception(f"{a} is Bool but {type_org} is expected at line {node.children[i].name.line}")
         elif a.isdigit():
             if type_org == 'T_Bool':
-                raise Exception(f'Not Matching type in line {node.children[i].name.line} for variable {a}')
+                raise Exception(f"{a} is {node.children[i].name.type} but Boolean variable is expected at line {node.children[i].name.line}")
 
 
 
