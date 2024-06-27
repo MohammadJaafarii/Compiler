@@ -1047,7 +1047,7 @@ def variable(node,return_value={} ,visited=None):
     elif node.name == 'value':
         for c in node.children:
 
-            if type(c.name) == type(input_string[0]) and c.name == 'bool':
+            if type(c.name) == type(input_string[0]) and c.name.name == 'bool':
                 if not (return_value['type'] == 'T_Bool'):
                     raise Exception(f'Value declaretion is not match at line {c.name.line}')
             if c.name == 'number':
