@@ -1,10 +1,9 @@
 from anytree import Node, RenderTree, PostOrderIter
 from element_lists import TERMINALS
-import IdentifierTable
 import copy
-IdTable = IdentifierTable.IdentifierTable()
+import IdentifierTable
 input_string: list = []
-
+IdTable = IdentifierTable.IdentifierTable()
 tree_index:int = 0
 def dfs(node, visited=None):
     global tree_index
@@ -16,14 +15,13 @@ def dfs(node, visited=None):
         return
 
     # نود جاری را بازدید کن
-    print(node.name)
     visited.add(node)
 
     if node.name in term_userdef:
         term_node = Node(input_string[tree_index], parent= node)
-        print(term_node.name.name)
-        print(f'-------{input_string[tree_index]}')
         tree_index -= 1
+
+
 
     # بازدید از بچه‌های نود جاری
     for child in node.children:
@@ -709,9 +707,8 @@ rules =[ 'program -> stmt stmt_list_tail',
     'or_condition_tail -> T_LOp_OR and_condition or_condition_tail | #',
     'and_condition -> not_condition and_condition_tail',
     'and_condition_tail -> T_LOp_AND not_condition and_condition_tail | #',
-    'not_condition -> T_LOp_NOT  expr | expr not_condition_tail',
-    'not_condition_tail -> relop expr | #',
-
+    'not_condition -> T_LOp_NOT  factor | factor not_condition_tail',
+    'not_condition_tail -> relop factor | #',
     'break_stmt -> T_Break T_Semicolon',
     'continue_stmt -> T_Continue T_Semicolon',
     'relop -> T_ROp_LE | T_ROp_GE | T_ROp_NE | T_ROp_E | T_ROp_L | T_ROp_G',
@@ -885,7 +882,7 @@ def starting_SyntaxAnalyzer():
             if type(node.name) == type(input_string[0]):
                 node.name = node.name.name
             print(f"{pre}{node.name}")
-
+        travesr_parse_tree(root)
         try:
             if IdTable.func['main'].retVal != 'T_Int' or IdTable.func['main'].paramType != None:
                 raise Exception('error in declare main function')
@@ -929,6 +926,10 @@ def travesr_parse_tree(node, visited=None):
         rt = Node(name='expr')
         expression(arg_node,rt)
         checkOp(rt)
+        for c in rt.children:
+            if c.name == '=':
+                check_assign(rt)
+
 
     elif node.name == 'index' or node.name=='number':
         for child in node.children:
@@ -1015,6 +1016,20 @@ def variable(node,return_value={} ,visited=None):
         return_value['type'] = node.children[0].name
     elif node.name == 'T_Id':
         IdTable.declare(node.children[0].name,return_value['type'])
+    elif node.name == 'value':
+        for c in node.children:
+            if c.name == 'bool':
+                if not (return_value['type'] == 'T_Bool'):
+                    raise Exception('value declaretion is not match')
+            if c.name == 'number':
+                for ch in c.children:
+                    if ch.name == 'T_Hexadecimal' or ch.name == 'T_Decimal':
+                        if not (return_value['type'] == 'T_Int'):
+                            raise Exception('value declaretion is not match')
+                    elif ch.name == 'T_Id':
+                        if IdTable.lookup(ch.children[0].name).type != return_value['type']:
+                            raise Exception('value declaretion is not match')
+
 
 
     visited.add(node)
@@ -1086,6 +1101,35 @@ def checkOp(node):
                     raise Exception('operand is not int')
             b = node.children[i + 1].name
             if not (b.isdigit() and b not in ['(',')']):
-                if IdTable.scopes[-2][node.children[i + 1].name].type != 'T_Int':
+                if IdTable.lookup(node.children[i+1].name).type != 'T_Int':
                     raise Exception('operand is not int')
+
+
+def check_assign(node):
+    type_org = IdTable.lookup(node.children[0].name).type
+    index = None
+    for i in range(len(node.children)):
+        if node.children[i].name == '=':
+            index = i + 1
+            break
+
+    for i in range(index,len(node.children)):
+        a = node.children[i].name
+        if (not a.isdigit()) and (not a in ['true','false']):
+            if IdTable.lookup(a).type != type_org:
+                raise Exception('in assaignment type not match')
+
+        elif a in ['true','false']:
+            if type_org!= 'T_Bool':
+                raise Exception('in assaignment type not match')
+        elif a.isdigit():
+            if type_org == 'T_Bool':
+                raise Exception('in assaignment type not match')
+
+
+
+
+
+
+
 
