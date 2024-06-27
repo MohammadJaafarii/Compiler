@@ -1153,10 +1153,10 @@ def check_assign(node,type_org=None):
 
         elif a in ['true','false']:
             if type_org!= 'T_Bool':
-                raise Exception(f"{a} is Bool but {type_org} is expected at line {node.children[i].name.line}")
+                raise Exception(f"'{a}' is Bool but {type_org} is expected at line {node.children[i].name.line}")
         elif a.isdigit():
             if type_org == 'T_Bool':
-                raise Exception(f"{a} is {node.children[i].name.type} but Boolean variable is expected at line {node.children[i].name.line}")
+                raise Exception(f"'{a}' is {node.children[i].name.type} but Boolean variable is expected at line {node.children[i].name.line}")
 
 
 
