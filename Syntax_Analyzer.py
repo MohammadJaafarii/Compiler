@@ -953,8 +953,8 @@ def travesr_parse_tree(node, visited=None):
                IdTable.lookup(child.children[0].name)
 
     if node.name == 'return_stmt':
-
         check_assign(node=func_return[counter].ItsReturn[0], type_org=func_return[counter].expected_return_type)
+        counter += 1
 
     # بازدید از بچه‌های نود جاری
     for child in node.children:
