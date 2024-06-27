@@ -837,8 +837,11 @@ firsts = {}
 follows = {}
 start_symbol = None
 root = None
+# For Phase 3
+func_return: list = []
+
 def starting_SyntaxAnalyzer():
-    global start_symbol, root, input_string, tree_index
+    global start_symbol, root, input_string, tree_index, func_return
     computeAllFirsts()
     # assuming first rule has start_symbol
     # start symbol can be modified in below line of code
@@ -888,13 +891,16 @@ def starting_SyntaxAnalyzer():
                 raise Exception('error in declare main function')
         except:
             raise Exception('program most have main function')
+
     else:
         print("\nNo input String detected")
 
 #----------------------------------------------------------------------------------------------
 #-------------------phase three----------------------------------------------------------------
 
+counter: int = 0
 def travesr_parse_tree(node, visited=None):
+    global counter
     if visited is None:
         visited = set()
 
@@ -948,10 +954,14 @@ def travesr_parse_tree(node, visited=None):
             if child.name == 'T_Id':
                IdTable.lookup(child.children[0].name)
 
+    if node.name == 'return_stmt':
+
+        check_assign(node=func_return[counter].ItsReturn[0], type_org=func_return[counter].expected_return_type)
 
     # بازدید از بچه‌های نود جاری
     for child in node.children:
         travesr_parse_tree(child, visited)
+
 
 
 def decl_or_func(node):
@@ -972,9 +982,9 @@ def decl_or_func(node):
             elif child.name == 'T_Id':
                 name = child.children[0].name
         paramType = []
-        for pre, fill, node in RenderTree(node):
-            print(f"{pre}{node.name}")
-        function(node=node,paramType=paramType,type=type)
+
+        function(node=node,paramType=paramType,type=type, name= name)
+        IdTable.exit_scope()
         if paramType == []:
             paramType = None
         IdTable.enter_func(name,type,type,paramType)
@@ -987,7 +997,8 @@ def decl_or_func(node):
         variable(node)
 
 
-def function(node,type,paramType=None, visited=None):
+def function(node,type, name,paramType=None, visited=None):
+    global func_return
     if visited is None:
         visited = set()
     if paramType is None:
@@ -996,22 +1007,33 @@ def function(node,type,paramType=None, visited=None):
     # اگر نود قبلاً بازدید شده، از آن عبور کن
     if node in visited:
         return
+    print(node.name+'--------------------------')
+
     if node.name == 'parameter':
         for child in node.children:
             if child.name == 'type':
                 paramType.append(child.children[0].name)
 
+
+
     if node.name == 'return_stmt':
-        for chile in node.children:
-            if chile.name == 'expr':
-                rt = tree(child)
-                check_assign(child,type)
+        for child in node.children:
+            if child.name == 'expr':
+                arg_node = tree(child)
+                rt = None
+                rt = Node(name='expr')
+                expression(arg_node, rt)
+                rt = tree(rt)
+                fnt_rtrn = Func_Return(name=name, expected_type=type)
+                fnt_rtrn.add_return(rt)
+                func_return.append(fnt_rtrn)
 
     visited.add(node)
 
     # بازدید از بچه‌های نود جاری
     for child in node.children:
-        function(child, paramType,visited)
+        function(node=child, type= type, paramType=paramType, visited=visited, name=name)
+
 
 
 def variable(node,return_value={} ,visited=None):
@@ -1125,7 +1147,7 @@ def check_assign(node,type_org=None):
 
     for i in range(index,len(node.children)):
         a = node.children[i].name
-        if (not a.isdigit()) and (not a in ['true','false']):
+        if (not a in ['+','-','*','/']) and (not a.isdigit()) and (not a in ['true','false']):
             if IdTable.lookup(a).type != type_org:
                 raise Exception('in assaignment type not match')
 
@@ -1139,3 +1161,10 @@ def check_assign(node,type_org=None):
 
 
 
+class Func_Return:
+    def __init__(self, name, expected_type):
+        self.function = name
+        self.expected_return_type = expected_type
+        self.ItsReturn = []
+    def add_return(self, returnn):
+        self.ItsReturn.append(returnn)

@@ -16,7 +16,6 @@ class IdentifierTable:
         if name in self.func:
             raise Exception(f"function '{name}' already declared")
         self.func[name] = Idtk(name=name,type=type,returnType=returnType,paramType=paramType)
-
     def enter_scope(self):
         self.scopes.append({})
 
