@@ -1,9 +1,9 @@
 int test_function(int a, int b, bool c) {
      int a,b,d,e;
-     e = 7;
+     int e = 7;
      bool c;
     if (c && true) {
-        return 6;
+        return a +b;
     } else {
         return a - b;
     }

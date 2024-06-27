@@ -23,9 +23,9 @@ class IdentifierTable:
         if len(self.scopes) > 1:
             self.scopes.pop()
 
-    def declare(self, name, var_type):
+    def declare(self, name, var_type, line):
         if name in self.scopes[-1]:
-            raise Exception(f"Variable '{name}' already declared in this scope")
+            raise Exception(f"Variable '{name}' already declared in this scope\nError at line {line}")
         self.scopes[-1][name] = Idtk(name=name,type=var_type)
 
     def lookup(self, name):

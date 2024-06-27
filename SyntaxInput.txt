@@ -20,6 +20,7 @@ T_Id d 2
 T_Comma , 2
 T_Id e 2
 T_Semicolon ; 2
+T_Int int 3
 T_Id e 3
 T_Assign = 3
 T_Decimal 7 3
@@ -35,7 +36,9 @@ T_True true 5
 T_RP ) 5
 T_LC { 5
 T_Return return 6
-T_Decimal 6 6
+T_Id a 6
+T_AOp_PL + 6
+T_Id b 6
 T_Semicolon ; 6
 T_RC } 7
 T_Else else 7

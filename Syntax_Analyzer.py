@@ -1043,7 +1043,7 @@ def variable(node,return_value={} ,visited=None):
     if node.name == 'type':
         return_value['type'] = node.children[0].name
     elif node.name == 'T_Id':
-        IdTable.declare(node.children[0].name.name,return_value['type'])
+        IdTable.declare(node.children[0].name.name,return_value['type'], node.children[0].name.line)
     elif node.name == 'value':
         for c in node.children:
 
@@ -1148,7 +1148,7 @@ def check_assign(node,type_org=None):
         a = node.children[i].name.name
         if (not a in ['+','-','*','/']) and (not a.isdigit()) and (not a in ['true','false']):
             if IdTable.lookup(node.children[i].name).type != type_org:
-                raise Exception(f"Not Matching type at line {node.children[i].name.line} for variable {a}\n<{a}>'s type: {IdTable.lookup(node.children[i].name).type}"
+                raise Exception(f"Not Matching type for variable '{a}' at line {node.children[i].name.line}\n<{a}>'s type: {IdTable.lookup(node.children[i].name).type}"
                                 f"\nExpected type: {type_org}")
 
         elif a in ['true','false']:
